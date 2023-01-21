@@ -15,7 +15,7 @@ class KanriChan(commands.Bot):
 
     async def setup_hook(self):
         print("loading cogs")
-        for cog in os.listdir("./app/cogs"):
+        for cog in os.listdir("./cogs"):
             if cog == "__pycache__":
                 continue
             await self.load_extension(f"cogs.{cog[:-3]}")
