@@ -8,9 +8,7 @@ import io
 class FileViewer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.supported_extensions = [
-            "application/pdf"
-        ]
+        self.supported_extensions = ["application/pdf"]
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -19,7 +17,10 @@ class FileViewer(commands.Cog):
         if message.channel.type != discord.ChannelType.text:
             return
         # 添付されたファイルの中に対応している拡張子がなければ無視
-        attachment_content_type_list = [attachment.content_type for attachment in message.attachments]
+        attachment_content_type_list = [
+            attachment.content_type for attachment in message.attachments
+        ]
+        await message.channel.send(attachment_content_type_list)
         if len(set(attachment_content_type_list) & set(self.supported_extensions)) == 0:
             return
 
@@ -29,7 +30,6 @@ class FileViewer(commands.Cog):
             images = []
             # pdf -> jpeg
             if attachment.content_type == "application/pdf":
-                await thread.send(embed=discord.Embed(title=attachment.filename, color=discord.Color.blue()))
                 pdf_io = io.BytesIO()
                 await attachment.save(pdf_io)
                 images = await loop.run_in_executor(
@@ -38,6 +38,11 @@ class FileViewer(commands.Cog):
             else:
                 continue
 
+            await thread.send(
+                embed=discord.Embed(
+                    title=attachment.filename, color=discord.Color.blue()
+                )
+            )
             images = [images[idx : idx + 10] for idx in range(0, len(images), 10)]
             count = 1
             for image_container in images:
@@ -48,7 +53,9 @@ class FileViewer(commands.Cog):
                     fileio.seek(0)
                     files.append(discord.File(fileio, filename="image.jpg"))
                     count += 1
-                await thread.send(content=f"{count-len(files)}~{count-1}ページ", files=files)
+                await thread.send(
+                    content=f"{count-len(files)}~{count-1}ページ", files=files
+                )
 
 
 async def setup(bot):
