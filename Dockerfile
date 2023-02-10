@@ -5,6 +5,8 @@ FROM python:3.9.13-bullseye
 RUN apt update; apt -y install tzdata && \
 cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
+RUN apt update; apt install -y poppler-utils poppler-data
+
 COPY app/. /app
 COPY requirements.txt /app
 COPY .env /app
