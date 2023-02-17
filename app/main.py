@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 class KanriChan(commands.Bot):
     def __init__(self):
         super().__init__(
-            command_prefix="./",
+            command_prefix="!",
             intents=discord.Intents.all(),
         )
         self.help_command = None
