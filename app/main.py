@@ -23,6 +23,11 @@ class KanriChan(commands.Bot):
         print("complete")
 
     async def on_ready(self):
+        self.guild = self.get_guild(int(os.environ["SERVER_ID"]))
+        self.category_channel = self.guild.get_channel(int(os.environ["RELAYING_CATEGORY_ID"]))
+        message_relay = self.get_cog("MessageRelay")
+        for channel in self.category_channel.text_channels:
+            await message_relay.setup_select(channel)
         print("ready")
 
 
