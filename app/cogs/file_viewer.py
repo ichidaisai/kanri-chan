@@ -20,7 +20,6 @@ class FileViewer(commands.Cog):
         attachment_content_type_list = [
             attachment.content_type for attachment in message.attachments
         ]
-        await message.channel.send(attachment_content_type_list)
         if len(set(attachment_content_type_list) & set(self.supported_extensions)) == 0:
             return
 
