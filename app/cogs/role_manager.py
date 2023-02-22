@@ -9,9 +9,6 @@ class RoleManager(commands.Cog):
     @commands.has_role("委員会")
     @commands.group()
     async def role(self, ctx):
-        unique_role = discord.utils.get(ctx.author.roles, name="委員会")
-        if unique_role is None:
-            return await ctx.send("このコマンドは委員会ロールを保持しているユーザーのみ使用可能です。")
         if ctx.invoked_subcommand is None:
             return await ctx.send("このコマンドにはサブコマンドが必要です。")
     
