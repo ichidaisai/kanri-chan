@@ -6,6 +6,7 @@ class RoleManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.has_role("委員会")
     @commands.group()
     async def role(self, ctx):
         unique_role = discord.utils.get(ctx.author.roles, name="委員会")
