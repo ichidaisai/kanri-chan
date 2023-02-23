@@ -19,6 +19,8 @@ class Group:
             data = group_table.find_one(name=name, type=type)
         else:
             raise MissingRequiredArgument()
+        if data is None:
+            raise GroupNotExist()
         self.role_id = data["role_id"]
         self.name = data["name"]
         self.type = data["type"]
@@ -32,4 +34,7 @@ class Group:
 
 
 class MissingRequiredArgument(Exception):
+    pass
+
+class GroupNotExist(Exception):
     pass
