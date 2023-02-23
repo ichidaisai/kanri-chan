@@ -33,6 +33,12 @@ class RoleManager(commands.Cog):
         await ctx.send(f"{group_type}に{group_name}を作成")
     
     @role.command()
+    async def make_bulk(self, ctx, group_type=None, *group_name_list):
+        for group_name in group_name_list:
+            await self.make(ctx, group_type, group_name)
+        await ctx.send(f"{group_type}に`[{group_name_list}]`を作成")
+
+    @role.command()
     async def delete(self, ctx, group_type=None, group_name=None):
         if group_type is None or group_type not in ["屋外", "屋内"]:
             return await ctx.send("削除する団体の出店形式が指定されていません。\n例) `!role delete 屋外 団体名A`")
