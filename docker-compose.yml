@@ -4,3 +4,13 @@ services:
   app:
     build:
       dockerfile: Dockerfile
+  postgres:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: pass2023
+    volumes:
+      - ./db/psgl:/var/lib/postgresql/data
+volumes:
+  postgres:

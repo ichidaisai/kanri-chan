@@ -16,7 +16,7 @@ class KanriChan(commands.Bot):
     async def setup_hook(self):
         print("loading cogs")
         for cog in os.listdir("./cogs"):
-            if cog == "__pycache__":
+            if cog in ["__pycache__", "mylib"]:
                 continue
             await self.load_extension(f"cogs.{cog[:-3]}")
         await self.tree.sync(guild=discord.Object(id=int(os.environ["SERVER_ID"])))
