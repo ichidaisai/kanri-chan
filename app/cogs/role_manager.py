@@ -50,9 +50,15 @@ class RoleManager(commands.Cog):
         group = database.Group(name=group_name, type=group_type)
         group.delete()
         channel = self.bot.guild.get_channel(group.channel_id)
-        await channel.delete()
+        if channel:
+            await channel.delete()
+        else:
+            await ctx.reply("既にチャンネルが削除されています。")
         role = self.bot.guild.get_role(group.role_id)
-        await role.delete()
+        if role:
+            await role.delete()
+        else:
+            await ctx.reply("既にロールが削除されています。")
         await ctx.reply(f"{group_type}の{group_name}を削除")
 
     @role.command()
