@@ -1,4 +1,5 @@
 import dataset
+from .errors import *
 
 
 DATABASE = "postgresql://postgres:pass2023@postgres:5432/postgres"
@@ -67,13 +68,3 @@ class Item:
 
     def delete(self):
         item_table.delete(id=self.id)
-
-
-class MissingRequiredArgument(Exception):
-    pass
-
-class GroupNotExist(Exception):
-    pass
-
-class ItemNotExist(Exception):
-    pass
