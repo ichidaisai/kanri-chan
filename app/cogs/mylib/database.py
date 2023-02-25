@@ -37,6 +37,7 @@ class Group:
             raise MissingRequiredArgument()
         if data is None:
             raise GroupNotExist()
+        self.id = data["id"]
         self.role_id = data["role_id"]
         self.name = data["name"]
         self.type = data["type"]
@@ -46,7 +47,7 @@ class Group:
         group_table.update(vars(self), ["role_id"])
 
     def delete(self):
-        group_table.delete(role_id=self.role_id)
+        group_table.delete(id=self.id)
 
 
 class Item:
