@@ -5,7 +5,9 @@ import os
 
 
 class RelaySelect(discord.ui.View):
-    def __init__(self, cog_cls, target_channel_dict, message_relaying_map, display_roles_map):
+    def __init__(
+        self, cog_cls, target_channel_dict, message_relaying_map, display_roles_map
+    ):
         super().__init__()
         self.add_item(ChannelSelect(cog_cls, target_channel_dict, message_relaying_map))
         self.add_item(RoleSelect(cog_cls, display_roles_map))
@@ -15,11 +17,13 @@ class ChannelSelect(discord.ui.Select):
     def __init__(self, cog_cls, target_channel_dict, message_relaying_map):
         self.cog_cls = cog_cls
         self.message_relaying_map = message_relaying_map
-        options=[]
+        options = []
         for name, _id in target_channel_dict:
-            options.append(discord.SelectOption(label=name, description='', value=_id))
-    
-        super().__init__(placeholder="チャンネル選択", min_values=1, max_values=1, options=options)
+            options.append(discord.SelectOption(label=name, description="", value=_id))
+
+        super().__init__(
+            placeholder="チャンネル選択", min_values=1, max_values=1, options=options
+        )
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.message.delete()
@@ -32,16 +36,19 @@ class RoleSelect(discord.ui.Select):
         self.cog_cls = cog_cls
         roles = ["なし", "カフェ局", "模擬局", "システム局"]
         self.display_roles_map = display_roles_map
-        options=[]
+        options = []
         for role in roles:
-            options.append(discord.SelectOption(label=role, description=''))
-    
-        super().__init__(placeholder="ロール選択", min_values=1, max_values=1, options=options)
+            options.append(discord.SelectOption(label=role, description=""))
+
+        super().__init__(
+            placeholder="ロール選択", min_values=1, max_values=1, options=options
+        )
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.message.delete()
         self.display_roles_map[interaction.channel_id] = self.values[0]
         await self.cog_cls.on_update(interaction.channel)
+
 
 class MessageRelay(commands.Cog):
     def __init__(self, bot):
@@ -65,7 +72,7 @@ class MessageRelay(commands.Cog):
         else:
             # 青色
             return None
-    
+
     async def setup_select(self, channel):
         target_category = self.bot.guild.get_channel(int(channel.topic))
         target_channel_dict = [(ch.name, ch.id) for ch in target_category.text_channels]
@@ -75,28 +82,48 @@ class MessageRelay(commands.Cog):
         embed.add_field(name="送信先", value=target_channel_dict[0][0])
         embed.add_field(name="表示ロール", value="なし")
         await channel.send(embed=embed)
-        await channel.send(view=RelaySelect(self, target_channel_dict, self.message_relaying_map, self.display_roles_map))
+        await channel.send(
+            view=RelaySelect(
+                self,
+                target_channel_dict,
+                self.message_relaying_map,
+                self.display_roles_map,
+            )
+        )
         await self.clear_bot_message(channel)
 
     async def clear_bot_message(self, channel):
         messages = [message async for message in channel.history(oldest_first=True)]
         for i, message in enumerate(messages):
-            if i == len(messages)-1:
+            if i == len(messages) - 1:
                 break
-            next_message = messages[i+1]
-            if next_message.author == self.bot.user and len(next_message.embeds) != 0 and message.author == self.bot.user:
+            next_message = messages[i + 1]
+            if (
+                next_message.author == self.bot.user
+                and len(next_message.embeds) != 0
+                and message.author == self.bot.user
+            ):
                 await message.delete()
 
     async def on_update(self, channel):
         target_category = self.bot.guild.get_channel(int(channel.topic))
         target_channel_dict = [(ch.name, ch.id) for ch in target_category.text_channels]
-        target_channel_name = self.bot.guild.get_channel(self.message_relaying_map[channel.id]).name
+        target_channel_name = self.bot.guild.get_channel(
+            self.message_relaying_map[channel.id]
+        ).name
         role_name = self.display_roles_map[channel.id]
         embed = discord.Embed(color=discord.Color.blue())
         embed.add_field(name="送信先", value=target_channel_name)
         embed.add_field(name="表示ロール", value=role_name)
         await channel.send(embed=embed)
-        await channel.send(view=RelaySelect(self, target_channel_dict, self.message_relaying_map, self.display_roles_map))
+        await channel.send(
+            view=RelaySelect(
+                self,
+                target_channel_dict,
+                self.message_relaying_map,
+                self.display_roles_map,
+            )
+        )
         await self.clear_bot_message(channel)
 
     @commands.Cog.listener()
@@ -105,7 +132,9 @@ class MessageRelay(commands.Cog):
             return
         if message.channel.id not in self.message_relaying_map.keys():
             return
-        target_channel = self.bot.guild.get_channel(self.message_relaying_map.get(message.channel.id))
+        target_channel = self.bot.guild.get_channel(
+            self.message_relaying_map.get(message.channel.id)
+        )
         name = self.display_roles_map[message.channel.id]
         icon_url = self.get_webfook_icon_url(name)
         webhooks = await target_channel.webhooks()
@@ -118,13 +147,16 @@ class MessageRelay(commands.Cog):
             name = message.author.display_name
             icon_url = message.author.display_avatar
         files = [await attachment.to_file() for attachment in message.attachments]
-        await webhook.send(content=message.content, username=name, avatar_url=icon_url, files=files)
+        await webhook.send(
+            content=message.content, username=name, avatar_url=icon_url, files=files
+        )
 
     @commands.command()
     async def reload_select(self, ctx):
         for channel in self.bot.category_channel.text_channels:
             await self.setup_select(channel)
         await ctx.send("リロード完了しました")
+
 
 async def setup(bot):
     await bot.add_cog(MessageRelay(bot))

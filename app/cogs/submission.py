@@ -150,7 +150,11 @@ class Submission(commands.Cog):
             await ctx.send(content=f"{count-len(embeds)}~{count-1}", embeds=embeds)
 
         def check(m):
-            return m.channel == ctx.channel and m.author == ctx.author and len(m.content) != 0
+            return (
+                m.channel == ctx.channel
+                and m.author == ctx.author
+                and len(m.content) != 0
+            )
 
         await ctx.send(
             "上記の提出物をすべて削除しますか？\n承認する場合は`ok`と発言してください。\n指定したい場合は`no`と発言してください。"
