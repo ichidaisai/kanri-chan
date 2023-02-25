@@ -8,7 +8,7 @@ class RelaySelect(discord.ui.View):
     def __init__(
         self, cog_cls, target_channel_dict, message_relaying_map, display_roles_map
     ):
-        super().__init__()
+        super().__init__(timeout=None)
         self.add_item(ChannelSelect(cog_cls, target_channel_dict, message_relaying_map))
         self.add_item(RoleSelect(cog_cls, display_roles_map))
 
