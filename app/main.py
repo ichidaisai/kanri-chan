@@ -2,7 +2,7 @@ import os
 
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
+from constant import TOKEN, SERVER_ID, RELAYING_CATEGORY_ID
 
 
 class KanriChan(commands.Bot):
@@ -15,18 +15,17 @@ class KanriChan(commands.Bot):
 
     async def setup_hook(self):
         print("loading cogs")
+        await self.load_extension("jishaku")
         for cog in os.listdir("./cogs"):
             if cog in ["__pycache__", "mylib"]:
                 continue
             await self.load_extension(f"cogs.{cog[:-3]}")
-        await self.tree.sync(guild=discord.Object(id=int(os.environ["SERVER_ID"])))
+        await self.tree.sync(guild=discord.Object(id=SERVER_ID))
         print("complete")
 
     async def on_ready(self):
-        self.guild = self.get_guild(int(os.environ["SERVER_ID"]))
-        self.category_channel = self.guild.get_channel(
-            int(os.environ["RELAYING_CATEGORY_ID"])
-        )
+        self.guild = self.get_guild(SERVER_ID)
+        self.category_channel = self.guild.get_channel(RELAYING_CATEGORY_ID)
         message_relay = self.get_cog("MessageRelay")
         for channel in self.category_channel.text_channels:
             await message_relay.setup_select(channel)
@@ -34,6 +33,5 @@ class KanriChan(commands.Bot):
 
 
 if __name__ == "__main__":
-    load_dotenv()
     bot = KanriChan()
-    bot.run(token=os.environ["TOKEN"])
+    bot.run(token=TOKEN)

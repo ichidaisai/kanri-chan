@@ -3,3 +3,4 @@ python-dotenv==0.21.1
 pdf2image==1.16.2
 dataset==1.6.0
 psycopg2==2.9.5
+jishaku==2.5.1

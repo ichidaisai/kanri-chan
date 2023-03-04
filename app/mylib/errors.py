@@ -2,9 +2,9 @@ class MissingRequiredArgument(Exception):
     pass
 
 
-class GroupNotExist(Exception):
+class UnionNotExist(Exception):
     pass
 
 
-class ItemNotExist(Exception):
+class DestNotExist(Exception):
     pass
