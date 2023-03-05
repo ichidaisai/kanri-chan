@@ -48,7 +48,7 @@ class Reminder(commands.Cog):
     @tasks.loop(time=times)
     async def reminder(self):
         now = datetime.datetime.now()
-        now = now.replace(minute=now.minute - now.minute % 15, second=0, microsecond=0)
+        now = now.replace(minute=now.minute, second=0, microsecond=0)
         all_dest = database.get_all_dest()
         for dest in all_dest:
             role = self.bot.guild.get_role(dest.role_id)
