@@ -90,7 +90,7 @@ class DestManager(commands.Cog):
                         提出先を作成しました。
                         📛項目名: {dest_name}
                         👤対象: {target_role.mention}
-                        ⏰期限: {msg.content}
+                        ⏰期限: {discord.utils.format_dt(dest_limit, style="F")}
                         💾種類: {document_format}
                         設定者: {handler_role.mention}
                         """,
@@ -108,7 +108,6 @@ class DestManager(commands.Cog):
             )
         dest = database.Dest(id=id)
         dest.delete()
-        role = self.bot.guild.get_role(dest.role_id)
         dt = datetime.datetime.fromtimestamp(dest.limit)
         handler_role = self.bot.guild.get_role(dest.handler_id)
         embed = discord.Embed(
@@ -117,8 +116,8 @@ class DestManager(commands.Cog):
                         提出先を削除しました。
                         id: {dest.id}
                         📛項目名: {dest.name}
-                        👤対象: {role.mention}
-                        ⏰期限: {dt.strftime('%Y/%m/%d %H:%M:%S')}
+                        👤対象: <@&{dest.role_id}>
+                        ⏰期限: {discord.utils.format_dt(dt, style="F")}
                         💾種類: {dest.format}
                         設定者: {handler_role.mention}
                         """,
@@ -144,15 +143,14 @@ class DestManager(commands.Cog):
         for dest_container in all_dest:
             embeds = []
             for dest in dest_container:
-                role = self.bot.guild.get_role(dest.role_id)
                 dt = datetime.datetime.fromtimestamp(dest.limit)
                 handler_role = self.bot.guild.get_role(dest.handler_id)
                 embed = discord.Embed(
                     description=f"""
                                 id: {dest.id}
                                 📛項目名: {dest.name}
-                                👤対象: {role.mention}
-                                ⏰期限: {dt.strftime('%Y/%m/%d %H:%M:%S')}
+                                👤対象: <@&{dest.role_id}>
+                                ⏰期限: {discord.utils.format_dt(dt, style="F")}
                                 💾種類: {dest.format}
                                 設定者: {handler_role.mention}
                                 """,

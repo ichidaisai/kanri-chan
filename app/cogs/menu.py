@@ -6,7 +6,7 @@ import asyncio
 
 class UnionMenuButtons(discord.ui.View):
     def __init__(self, cog, union):
-        super().__init__(timeout=60)
+        super().__init__(timeout=None)
         self.cog = cog
         self.union = union
 

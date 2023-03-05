@@ -8,3 +8,7 @@ class UnionNotExist(Exception):
 
 class DestNotExist(Exception):
     pass
+
+
+class DocumentNotExist(Exception):
+    pass

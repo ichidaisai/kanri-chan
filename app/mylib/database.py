@@ -15,17 +15,19 @@ def is_union_exist(union_name, union_type):
 
 
 class Union:
-    def __init__(self, id=None, role_id=None, name=None, type=None):
+    def __init__(self, id=None, role_id=None, name=None, type=None, channel_id=None):
         if id:
             data = union_table.find_one(id=id)
         elif role_id:
             data = union_table.find_one(role_id=role_id)
         elif name and type:
             data = union_table.find_one(name=name, type=type)
+        elif channel_id:
+            data = union_table.find_one(channel_id=channel_id)
         else:
             raise MissingRequiredArgument()
         if data is None:
-            raise UnionNotExist()
+            raise UnionNotExist(f"Arguments: id={id}, role_id={role_id}, name={name}, type={type}, channel_id={channel_id}")
         self.id = data["id"]
         self.role_id = data["role_id"]
         self.name = data["name"]
@@ -64,7 +66,7 @@ class Dest:
         else:
             raise MissingRequiredArgument()
         if data is None:
-            raise DestNotExist()
+            raise DestNotExist(f"Arguments: {id}, {name}")
         self.id = data["id"]
         self.name = data["name"]
         self.role_id = data["role_id"]
@@ -96,7 +98,7 @@ class Document:
         else:
             raise MissingRequiredArgument()
         if data is None:
-            raise DestNotExist()
+            raise DocumentNotExist()
         self.id = data["id"]
         self.dest_id = data["dest_id"]
         self.union_id = data["union_id"]
