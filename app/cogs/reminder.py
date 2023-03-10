@@ -9,6 +9,15 @@ from mylib.errors import UnionNotExist
 class Reminder(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.timedelta_list = [
+            datetime.timedelta(days=3),
+            datetime.timedelta(days=1),
+            datetime.timedelta(hours=12),
+            datetime.timedelta(hours=9),
+            datetime.timedelta(hours=6),
+            datetime.timedelta(hours=3),
+            datetime.timedelta(hours=1)
+        ]
         self.reminder.start()
 
     times = []
@@ -25,16 +34,7 @@ class Reminder(commands.Cog):
             return
         # 時間
         limit_dt = datetime.datetime.fromtimestamp(dest.limit)
-        timedelta_list = [
-            datetime.timedelta(days=3),
-            datetime.timedelta(days=1),
-            datetime.timedelta(hours=12),
-            datetime.timedelta(hours=9),
-            datetime.timedelta(hours=6),
-            datetime.timedelta(hours=3),
-            datetime.timedelta(hours=1)
-        ]
-        if limit_dt - now in timedelta_list:
+        if limit_dt - now in self.timedelta_list:
             return
         # 削除
         async for message in channel.history(limit=None):
@@ -59,8 +59,6 @@ class Reminder(commands.Cog):
                     await self.send_reminder(dest, channel, now)
             elif isinstance(abstract_channel, discord.TextChannel):
                 await self.send_reminder(dest, abstract_channel, now)
-        # channel = self.bot.guild.get_channel(1040087038793367652)
-        # await channel.send("15分立ちました、チェックします")
 
     @reminder.before_loop
     async def before_reminder(self):
