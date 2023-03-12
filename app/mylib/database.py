@@ -32,7 +32,9 @@ class Union:
         else:
             raise MissingRequiredArgument()
         if data is None:
-            raise UnionNotExist(f"Arguments: id={id}, role_id={role_id}, name={name}, type={type}, channel_id={channel_id}")
+            raise UnionNotExist(
+                f"Arguments: id={id}, role_id={role_id}, name={name}, type={type}, channel_id={channel_id}"
+            )
         self.id = data["id"]
         self.role_id = data["role_id"]
         self.name = data["name"]

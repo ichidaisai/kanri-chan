@@ -1,6 +1,5 @@
 from discord.ext import commands
 import discord
-from discord import app_commands
 from mylib import database
 import asyncio
 import datetime

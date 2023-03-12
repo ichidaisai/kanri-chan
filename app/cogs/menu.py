@@ -1,7 +1,6 @@
 from discord.ext import commands
 from mylib import database
 import discord
-import asyncio
 
 
 class UnionMenuButtons(discord.ui.View):
