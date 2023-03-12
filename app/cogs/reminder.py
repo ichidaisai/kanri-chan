@@ -60,6 +60,22 @@ class Reminder(commands.Cog):
             elif isinstance(abstract_channel, discord.TextChannel):
                 await self.send_reminder(dest, abstract_channel, now)
 
+        if now.weekday() == 0 and now.hour == 7 and now.minute == 0: # 月曜日の午前7時0分
+            for union in database.get_all_union():
+                role = discord.utils.get(self.bot.guild.roles, name=union.type)
+                dests_for_type = database.get_dests(role_id=role.id)
+                dests_for_union = database.get_dests(role_id=union.role_id)
+                dests = set(dests_for_type+dests_for_union)
+                for dest in dests:
+                    if database.is_document_exist(dest_id=dest.id, union_id=union.id):
+                        continue
+                    limit_dt = datetime.datetime.fromtimestamp(dest.limit)
+                    if datetime.timedelta(days=0) < (limit_dt - now) <= datetime.timedelta(days=7):
+                        break
+                else:
+                    channel = self.bot.guild.get_channel(union.channel_id)
+                    await channel.send("✅ 今週が締切の提出物はありません")
+
     @reminder.before_loop
     async def before_reminder(self):
         await self.bot.wait_until_ready()

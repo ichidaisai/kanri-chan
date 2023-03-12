@@ -14,6 +14,11 @@ def is_union_exist(union_name, union_type):
     return union_table.find_one(name=union_name, type=union_type) is not None
 
 
+def get_all_union():
+    union_id_list = [data["id"] for data in union_table.all()]
+    return [Union(id=union_id) for union_id in union_id_list]
+
+
 class Union:
     def __init__(self, id=None, role_id=None, name=None, type=None, channel_id=None):
         if id:
