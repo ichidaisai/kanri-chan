@@ -49,10 +49,8 @@ class DestManager(commands.Cog):
 
         # limit
         await interaction.response.send_message(
-            """
-            ⏰ 提出期限を指定してください。
-            入力例: 2023年4月1日 8時30分 としたい場合は、`2023/4/1 08:30` と入力します。
-            """
+            "⏰ 提出期限を指定してください。\n"
+            "入力例: 2023年4月1日 8時30分 としたい場合は、`2023/4/1 08:30` と入力します。"
         )
         ask_msg = await interaction.original_response()
         try:
@@ -63,10 +61,9 @@ class DestManager(commands.Cog):
             )
         if not utils.is_datetime(msg.content):
             return await ask_msg.edit(
-                content="""
-                ⚠ 指定された期限をうまく解釈できませんでした。
-                入力例: 2022年4月1日 8時30分 としたい場合は、`2022/4/1 08:30` と入力します。
-                もう一度、最初から操作をやり直してください。""",
+                content="⚠ 指定された期限をうまく解釈できませんでした。\n"
+                        "入力例: 2022年4月1日 8時30分 としたい場合は、`2022/4/1 08:30` と入力します。\n"
+                        "もう一度、最初から操作をやり直してください。",
                 delete_after=10,
             )
         dest_limit = datetime.datetime.strptime(msg.content, "%Y/%m/%d %H:%M")
