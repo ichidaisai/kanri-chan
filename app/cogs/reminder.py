@@ -34,7 +34,7 @@ class Reminder(commands.Cog):
             return
         # 時間
         limit_dt = datetime.datetime.fromtimestamp(dest.limit)
-        if limit_dt - now in self.timedelta_list:
+        if not limit_dt - now in self.timedelta_list:
             return
         # 削除
         async for message in channel.history(limit=None):
