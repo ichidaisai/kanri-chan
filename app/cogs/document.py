@@ -163,7 +163,7 @@ class DocumentManager(commands.Cog):
         attachment="ファイル"
     )
     @document_group.command(name="作成", description="提出物作成")
-    async def make_dest(
+    async def make_document(
         self,
         interaction,
         union_id: int,
