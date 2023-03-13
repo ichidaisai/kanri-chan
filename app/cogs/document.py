@@ -198,6 +198,32 @@ class DocumentManager(commands.Cog):
             document.update()
         await interaction.response.send_message("提出を受け付けました。")
 
+    @app_commands.describe(
+        union_role="提出物を削除する団体をロールで指定",
+        dest_id="削除する提出物の提出先をIDで指定",
+    )
+    @app_commands.rename(
+        union_role="団体",
+        dest_id="提出先",
+    )
+    @document_group.command(name="削除", description="提出物削除")
+    async def delete_document(
+        self,
+        interaction,
+        union_role: discord.Role,
+        dest_id: int,
+    ):
+        if not database.is_union_exist(union_role_id=union_role.id):
+            return await interaction.response.send_message("存在しない団体です。")
+        if not database.is_dest_exist(dest_id=dest_id):
+            return await interaction.response.send_message("存在しない提出先です。")
+        union = database.Union(role_id=union_role.id)
+        if not database.is_document_exist(dest_id=dest_id, union_id=union.id):
+            return await interaction.response.send_message("存在しない提出物です。")
+        document = database.Document(dest_id=dest_id, union_id=union.id)
+        document.delete()
+        await interaction.response.send_message("提出物を削除しました。")
+
 
 async def setup(bot):
     await bot.add_cog(Document(bot))

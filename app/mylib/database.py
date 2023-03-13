@@ -118,3 +118,6 @@ class Document:
 
     def update(self):
         document_table.update(vars(self), ["id"])
+
+    def delete(self):
+        document_table.delete(id=self.id)
