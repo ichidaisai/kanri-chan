@@ -10,8 +10,13 @@ dest_table = db["dest_table"]
 document_table = db["document_table"]
 
 
-def is_union_exist(union_name, union_type):
-    return union_table.find_one(name=union_name, type=union_type) is not None
+def is_union_exist(union_name=None, union_type=None, union_id=None):
+    if union_name and union_type:
+        return union_table.find_one(name=union_name, type=union_type) is not None
+    elif union_id:
+        return union_table.find_one(id=union_id) is not None
+    else:
+        raise MissingRequiredArgument()
 
 
 def get_all_union():

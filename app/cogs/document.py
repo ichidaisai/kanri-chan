@@ -4,6 +4,8 @@ from mylib import database
 import asyncio
 import datetime
 from constant import SERVER_ID
+from discord import app_commands
+import io
 
 
 class Document(commands.Cog):
@@ -139,5 +141,64 @@ class Document(commands.Cog):
             )
 
 
+@app_commands.guilds(discord.Object(id=SERVER_ID))
+class DocumentCommandGroup(app_commands.Group):
+    pass
+
+
+class DocumentManager(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    document_group = DocumentCommandGroup(name="提出物", description="提出物を操作します。")
+
+    @app_commands.describe(
+        union_id="作成する団体をIDで指定",
+        dest_id="提出する提出先をIDで指定",
+    )
+    @app_commands.rename(
+        union_id="団体",
+        dest_id="提出先",
+        content="プレーンテキスト",
+        attachment="ファイル"
+    )
+    @document_group.command(name="作成", description="提出物作成")
+    async def make_dest(
+        self,
+        interaction,
+        union_id: int,
+        dest_id: int,
+        content: str=None,
+        attachment: discord.Attachment=None
+    ):
+        if not database.is_union_exist(union_id=union_id):
+            return await interaction.response.send_message("存在しない団体です。")
+        if not database.is_dest_exist(dest_id=dest_id):
+            return await interaction.response.send_message("存在しない提出先です。")
+        union = database.Union(id=union_id)
+        dest = database.Dest(id=dest_id)
+        if dest.format == "プレーンテキスト" and content is None:
+            return await interaction.response.send_message("プレーンテキストで提出してください。")
+        elif dest.format == "ファイル" and attachment is None:
+            return await interaction.response.send_message("ファイルで提出してください。")
+        if attachment:
+            file_io = io.BytesIO()
+            await attachment.save(file_io)
+            file_io.seek(0)
+            msg = await interaction.channel.send(content, files=[discord.File(file_io, filename=attachment.filename)])
+        else:
+            msg = await interaction.channel.send(content)
+        if not database.is_document_exist(dest_id=dest_id, union_id=union.id):
+            database.document_table.insert(
+                dict(dest_id=dest_id, union_id=union.id, msg_url=msg.jump_url)
+            )
+        else:
+            document = database.Document(dest_id=dest_id, union_id=union.id)
+            document.msg_url = msg.jump_url
+            document.update()
+        await interaction.response.send_message("提出を受け付けました。")
+
+
 async def setup(bot):
     await bot.add_cog(Document(bot))
+    await bot.add_cog(DocumentManager(bot))
