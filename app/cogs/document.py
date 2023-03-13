@@ -153,11 +153,11 @@ class DocumentManager(commands.Cog):
     document_group = DocumentCommandGroup(name="提出物", description="提出物を操作します。")
 
     @app_commands.describe(
-        union_id="作成する団体をIDで指定",
+        union_role="作成する団体をロールで指定",
         dest_id="提出する提出先をIDで指定",
     )
     @app_commands.rename(
-        union_id="団体",
+        union_role="団体",
         dest_id="提出先",
         content="プレーンテキスト",
         attachment="ファイル"
@@ -166,16 +166,16 @@ class DocumentManager(commands.Cog):
     async def make_document(
         self,
         interaction,
-        union_id: int,
+        union_role: discord.Role,
         dest_id: int,
         content: str=None,
         attachment: discord.Attachment=None
     ):
-        if not database.is_union_exist(union_id=union_id):
+        if not database.is_union_exist(union_role_id=union_role.id):
             return await interaction.response.send_message("存在しない団体です。")
         if not database.is_dest_exist(dest_id=dest_id):
             return await interaction.response.send_message("存在しない提出先です。")
-        union = database.Union(id=union_id)
+        union = database.Union(role_id=union_role.id)
         dest = database.Dest(id=dest_id)
         if dest.format == "プレーンテキスト" and content is None:
             return await interaction.response.send_message("プレーンテキストで提出してください。")
