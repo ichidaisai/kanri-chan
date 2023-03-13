@@ -224,6 +224,91 @@ class DocumentManager(commands.Cog):
         document.delete()
         await interaction.response.send_message("提出物を削除しました。")
 
+    @app_commands.describe(
+        union_role="提出物を出力する団体をロールで指定",
+        dest_id="提出物確認リストを出力する提出先をIDで指定",
+    )
+    @app_commands.rename(
+        union_role="団体",
+        dest_id="提出先",
+    )
+    @document_group.command(name="確認", description="提出物確認")
+    async def check_document(
+        self,
+        interaction,
+        union_role: discord.Role=None,
+        dest_id: int=None,
+    ):
+        if union_role and dest_id:
+            if not database.is_union_exist(union_role_id=union_role.id):
+                return await interaction.response.send_message("存在しない団体です。")
+            union = database.Union(role_id=union_role.id)
+            if not database.is_dest_exist(dest_id=dest_id):
+                return await interaction.response.send_message("存在しない提出先です。")
+            dest = database.Dest(id=dest_id)
+            if not database.is_document_exist(dest_id=dest_id, union_id=union.id):
+                return await interaction.response.send_message("未提出です。")
+            document = database.Document(dest_id=dest_id, union_id=union.id)
+            embed = discord.Embed(
+                description=f"""
+                            id: {document.id}
+                            提出先: {dest.name}
+                            団体名: {union_role.mention}
+                            提出物: [jump]({document.msg_url})
+                            """,
+                color=discord.Color.green(),
+            )
+            return await interaction.response.send_message("提出済みです。", embed=embed)
+        elif union_role:
+            if not database.is_union_exist(union_role_id=union_role.id):
+                return await interaction.response.send_message("存在しない団体です。")
+            union = database.Union(role_id=union_role.id)
+            abs_role = discord.utils.get(self.bot.guild.roles, name=union.type)
+            dests_for_type = database.get_dests(role_id=abs_role.id)
+            dests_for_union = database.get_dests(role_id=union.role_id)
+            dests = list(set(dests_for_type + dests_for_union))
+            if len(dests) == 0:
+                return await interaction.response.send_message("この団体に指示されている提出先はありません。")
+            table = f"union_name: {union.name}\nunion_type: {union.type}\n\n"
+            for dest in dests:
+                if database.is_document_exist(dest_id=dest_id, union_id=union.id):
+                    table += f"{dest.name}:  ✅\n"
+                else:
+                    table += f"{dest.name}:  ❌\n"
+            embed = discord.Embed(title=f"{union.name}に指示されている提出先の一覧", description=table, color=discord.Color.green())
+            await interaction.response.send_message(embed=embed)
+        elif dest_id:
+            if not database.is_dest_exist(dest_id=dest_id):
+                return await interaction.response.send_message("存在しない提出先です。")
+            dest = database.Dest(id=dest_id)
+            role = self.bot.guild.get_role(dest.role_id)
+            if database.is_union_exist(union_role_id=role.id):
+                union = database.Union(role_id=role.id)
+                if not database.is_document_exist(dest_id=dest_id, union_id=union.id):
+                    return await interaction.response.send_message("未提出です。")
+                document = database.Document(dest_id=dest_id, union_id=union.id)
+                embed = discord.Embed(
+                    description=f"""
+                                id: {document.id}
+                                提出先: {dest.name}
+                                団体名: {union_role.mention}
+                                提出物: [jump]({document.msg_url})
+                                """,
+                    color=discord.Color.green(),
+                )
+                return await interaction.response.send_message("提出済みです。", embed=embed)
+            union_list = [union for union in database.get_all_union() if union.type == role.name]
+            table = f"dest_id: {dest.id}\ndest_name: {dest.name}\n\n"
+            for union in union_list:
+                if database.is_document_exist(dest_id=dest.id, union_id=union.id):
+                    table += f"id: {union.id}: {union.name}:  ✅\n"
+                else:
+                    table += f"id: {union.id}: {union.name}:  ❌\n"
+                embed = discord.Embed(title=f"{dest.name}の提出状況", description=table, color=discord.Color.green())
+                await interaction.response.send_message(embed=embed)
+        else:
+            return await interaction.response.send_message("団体もしくは提出先を指定してください。")
+
 
 async def setup(bot):
     await bot.add_cog(Document(bot))
