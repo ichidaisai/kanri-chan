@@ -10,8 +10,13 @@ dest_table = db["dest_table"]
 document_table = db["document_table"]
 
 
-def is_union_exist(union_name, union_type):
-    return union_table.find_one(name=union_name, type=union_type) is not None
+def is_union_exist(union_name=None, union_type=None, union_role_id=None):
+    if union_name and union_type:
+        return union_table.find_one(name=union_name, type=union_type) is not None
+    elif union_role_id:
+        return union_table.find_one(role_id=union_role_id) is not None
+    else:
+        raise MissingRequiredArgument()
 
 
 def get_all_union():
@@ -113,3 +118,6 @@ class Document:
 
     def update(self):
         document_table.update(vars(self), ["id"])
+
+    def delete(self):
+        document_table.delete(id=self.id)
