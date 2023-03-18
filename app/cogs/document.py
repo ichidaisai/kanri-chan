@@ -313,8 +313,8 @@ class DocumentManager(commands.Cog):
                     table += f"id: {union.id}: {union.name}:  ✅\n"
                 else:
                     table += f"id: {union.id}: {union.name}:  ❌\n"
-                embed = discord.Embed(title=f"{dest.name}の提出状況", description=table, color=discord.Color.green())
-                await interaction.response.send_message(embed=embed)
+            embed = discord.Embed(title=f"{dest.name}の提出状況", description=table, color=discord.Color.green())
+            await interaction.response.send_message(embed=embed)
         else:
             return await interaction.response.send_message("団体もしくは提出先を指定してください。")
 
