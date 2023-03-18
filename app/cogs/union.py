@@ -24,7 +24,7 @@ class UnionManager(commands.Cog):
     async def union_make(
         self, interaction, union_type: Literal["屋外", "屋内"], union_name: str
     ):
-        union_names = union_name.split()
+        union_names = "".join(union_name.split(",")).split()
         for name in union_names:
             if database.is_union_exist(name, union_type):
                 return await interaction.response.send_message(f"{name}は既に存在する団体名です。")
