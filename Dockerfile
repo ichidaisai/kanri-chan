@@ -10,6 +10,9 @@ RUN apt update; apt install -y poppler-utils poppler-data
 COPY app/. /app
 COPY requirements.txt /app
 COPY .env /app
+COPY settings.yaml /app
+COPY client_secrets.json /app
+COPY credentials.json /app
 
 WORKDIR /app
 
