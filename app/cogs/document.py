@@ -438,7 +438,7 @@ class DocumentManager(commands.Cog):
                     drive_file.SetContentFile(zip_path)
                     drive_file.Upload()
                     await interaction.followup.send(
-                        "ファイルが大きすぎたため、Google Driveにアップロードしました。"
+                        f"ファイルが大きすぎたため、Google Driveにアップロードしました。\nhttps://drive.google.com/uc?export=download&id={drive_file['id']}"
                     )
                 except Exception:
                     await interaction.followup.send("エラーが発生しました。管理者まで連絡してください。")
