@@ -166,10 +166,7 @@ class DocumentManager(commands.Cog):
         dest_id="提出する提出先をIDで指定",
     )
     @app_commands.rename(
-        union_role="団体",
-        dest_id="提出先",
-        content="プレーンテキスト",
-        attachment="ファイル"
+        union_role="団体", dest_id="提出先", content="プレーンテキスト", attachment="ファイル"
     )
     @document_group.command(name="作成", description="提出物作成")
     async def make_document(
@@ -177,8 +174,8 @@ class DocumentManager(commands.Cog):
         interaction,
         union_role: discord.Role,
         dest_id: int,
-        content: str=None,
-        attachment: discord.Attachment=None
+        content: str = None,
+        attachment: discord.Attachment = None,
     ):
         if not database.is_union_exist(union_role_id=union_role.id):
             return await interaction.response.send_message("存在しない団体です。")
@@ -194,7 +191,9 @@ class DocumentManager(commands.Cog):
             file_io = io.BytesIO()
             await attachment.save(file_io)
             file_io.seek(0)
-            msg = await interaction.channel.send(content, files=[discord.File(file_io, filename=attachment.filename)])
+            msg = await interaction.channel.send(
+                content, files=[discord.File(file_io, filename=attachment.filename)]
+            )
         else:
             msg = await interaction.channel.send(content)
         if not database.is_document_exist(dest_id=dest_id, union_id=union.id):
@@ -245,8 +244,8 @@ class DocumentManager(commands.Cog):
     async def check_document(
         self,
         interaction,
-        union_role: discord.Role=None,
-        dest_id: int=None,
+        union_role: discord.Role = None,
+        dest_id: int = None,
     ):
         if union_role and dest_id:
             if not database.is_union_exist(union_role_id=union_role.id):
@@ -284,7 +283,11 @@ class DocumentManager(commands.Cog):
                     table += f"{dest.name}:  ✅\n"
                 else:
                     table += f"{dest.name}:  ❌\n"
-            embed = discord.Embed(title=f"{union.name}に指示されている提出先の一覧", description=table, color=discord.Color.green())
+            embed = discord.Embed(
+                title=f"{union.name}に指示されている提出先の一覧",
+                description=table,
+                color=discord.Color.green(),
+            )
             await interaction.response.send_message(embed=embed)
         elif dest_id:
             if not database.is_dest_exist(dest_id=dest_id):
@@ -306,14 +309,20 @@ class DocumentManager(commands.Cog):
                     color=discord.Color.green(),
                 )
                 return await interaction.response.send_message("提出済みです。", embed=embed)
-            union_list = [union for union in database.get_all_union() if union.type == role.name]
+            union_list = [
+                union for union in database.get_all_union() if union.type == role.name
+            ]
             table = f"dest_id: {dest.id}\ndest_name: {dest.name}\n\n"
             for union in union_list:
                 if database.is_document_exist(dest_id=dest.id, union_id=union.id):
                     table += f"id: {union.id}: {union.name}:  ✅\n"
                 else:
                     table += f"id: {union.id}: {union.name}:  ❌\n"
-            embed = discord.Embed(title=f"{dest.name}の提出状況", description=table, color=discord.Color.green())
+            embed = discord.Embed(
+                title=f"{dest.name}の提出状況",
+                description=table,
+                color=discord.Color.green(),
+            )
             await interaction.response.send_message(embed=embed)
         else:
             return await interaction.response.send_message("団体もしくは提出先を指定してください。")
