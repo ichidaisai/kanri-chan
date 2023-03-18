@@ -40,6 +40,11 @@ class Document(commands.Cog):
                 content="idではない返答を受け取りました。もう一度、最初から操作をやり直してください。"
             )
         dest = database.Dest(id=dest_id)
+        now = datetime.datetime.now()
+        now = now.replace(minute=now.minute, second=0, microsecond=0)
+        limit_dt = datetime.datetime.fromtimestamp(dest.limit)
+        if now >= limit_dt:
+            return await interaction.channel.send(content="提出期限を過ぎたので、提出できません。")
         role = self.bot.guild.get_role(dest.role_id)
         if role not in interaction.user.roles:
             return await interaction.channel.send(content="あなたはこの提出先の対象ではありません。")
