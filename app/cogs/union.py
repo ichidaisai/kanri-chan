@@ -29,13 +29,13 @@ class UnionManager(commands.Cog):
             if database.is_union_exist(name, union_type):
                 return await interaction.response.send_message(f"{name}は既に存在する団体名です。")
             category = discord.utils.get(self.bot.guild.categories, name=union_type)
-            channel = await category.create_text_channel(name=union_name)
-            role = await self.bot.guild.create_role(name=union_name)
+            channel = await category.create_text_channel(name=name)
+            role = await self.bot.guild.create_role(name=name)
             await channel.set_permissions(role, view_channel=True)
             database.union_table.insert(
                 dict(
                     role_id=role.id,
-                    name=union_name,
+                    name=name,
                     type=union_type,
                     channel_id=channel.id,
                 )
