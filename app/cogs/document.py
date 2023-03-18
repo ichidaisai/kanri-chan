@@ -66,7 +66,6 @@ class Document(commands.Cog):
                 return (
                     m.channel == interaction.channel
                     and m.author == interaction.user
-                    and len(m.content) != 0
                     and len(m.attachments) != 0
                 )
 
