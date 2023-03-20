@@ -16,6 +16,6 @@ COPY credentials.json /app
 
 WORKDIR /app
 
-RUN pip install -U pip
+RUN pip install -U pip==23.0.1
 RUN pip install -r requirements.txt
 CMD ["python", "main.py"]
