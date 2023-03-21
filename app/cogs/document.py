@@ -3,7 +3,7 @@ import discord
 from mylib import database, utils
 import asyncio
 import datetime
-from constant import SERVER_ID, GOOGLE_DRIVE_FOLDER_ID
+from constant import SERVER_ID, GOOGLE_DRIVE_FOLDER_ID, NOTICE_CATEGORY_ID
 from discord import app_commands
 import io
 import pandas as pd
@@ -86,6 +86,20 @@ class Document(commands.Cog):
             document.msg_url = msg.jump_url
             document.update()
         await interaction.channel.send("提出を受け付けました。")
+        # 提出通知
+        document = database.Document(dest_id=dest_id, union_id=union.id)
+        notice_channel = discord.utils.get(
+            (self.bot.guild.get_channel(NOTICE_CATEGORY_ID)).text_channels,
+            name=union.type,
+        )
+        embed = discord.Embed(
+            description=f"id: {document.id}\n"
+            f"提出先: {dest.name}(id={dest.id})\n"
+            f"団体名: {union.name}\n"
+            f"提出物: [jump]({document.msg_url})",
+            color=discord.Color.green(),
+        )
+        await notice_channel.send(content="🔔 新しい提出があります。", embed=embed)
 
     async def check_dest(self, interaction, union):
         """未提出の提出先を確認"""
