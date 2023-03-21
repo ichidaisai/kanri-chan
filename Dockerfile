@@ -7,15 +7,17 @@ cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
 RUN apt update; apt install -y poppler-utils poppler-data
 
-COPY app/. /app
-COPY requirements.txt /app
-COPY .env /app
-COPY settings.yaml /app
-COPY client_secrets.json /app
-COPY credentials.json /app
+RUN pip install -U pip==23.0.1
 
 WORKDIR /app
 
-RUN pip install -U pip==23.0.1
+COPY requirements.txt .
 RUN pip install -r requirements.txt
+
+COPY app/. .
+COPY .env .
+COPY settings.yaml .
+COPY client_secrets.json .
+COPY credentials.json .
+
 CMD ["python", "main.py"]
