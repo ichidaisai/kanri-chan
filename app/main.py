@@ -1,4 +1,5 @@
 import os
+import logging
 
 import discord
 from discord.ext import commands
@@ -14,14 +15,12 @@ class KanriChan(commands.Bot):
         self.help_command = None
 
     async def setup_hook(self):
-        print("loading cogs")
         await self.load_extension("jishaku")
         for cog in os.listdir("./cogs"):
             if cog in ["__pycache__", "mylib"]:
                 continue
             await self.load_extension(f"cogs.{cog[:-3]}")
         await self.tree.sync(guild=discord.Object(id=SERVER_ID))
-        print("complete")
 
     async def on_ready(self):
         self.guild = self.get_guild(SERVER_ID)
@@ -29,7 +28,7 @@ class KanriChan(commands.Bot):
         message_relay = self.get_cog("MessageRelay")
         for channel in self.category_channel.text_channels:
             await message_relay.setup_select(channel)
-        print("ready")
+        discord.utils.setup_logging(level=logging.ERROR, root=False)
 
 
 if __name__ == "__main__":
