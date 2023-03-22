@@ -97,7 +97,7 @@ class UnionManager(commands.Cog):
         await interaction.response.send_message(
             f"{union_type}の{union_name}を{new_name}に改名"
         )
-    
+
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
         # ロールが追加されたとき以外をreturn

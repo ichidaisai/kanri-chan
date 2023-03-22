@@ -83,11 +83,11 @@ class DestManager(commands.Cog):
         embed = discord.Embed(
             title="✅ 提出先作成",
             description="提出先を作成しました。\n"
-                        f"📛項目名: {dest_name}\n"
-                        f"👤対象: {target_role.mention}\n"
-                        f"⏰期限: {discord.utils.format_dt(dest_limit, style='F')}\n"
-                        f"💾種類: {document_format}\n"
-                        f"設定者: {handler_role.mention}",
+            f"📛項目名: {dest_name}\n"
+            f"👤対象: {target_role.mention}\n"
+            f"⏰期限: {discord.utils.format_dt(dest_limit, style='F')}\n"
+            f"💾種類: {document_format}\n"
+            f"設定者: {handler_role.mention}",
             color=discord.Color.green(),
         )
         await msg.delete()
@@ -107,12 +107,12 @@ class DestManager(commands.Cog):
         embed = discord.Embed(
             title="✅ 提出先削除",
             description="提出先を削除しました。\n"
-                        f"id: {dest.id}\n"
-                        f"📛項目名: {dest.name}\n"
-                        f"👤対象: <@&{dest.role_id}>\n"
-                        f"⏰期限: {discord.utils.format_dt(dt, style='F')}\n"
-                        f"💾種類: {dest.format}\n"
-                        f"設定者: {handler_role.mention}",
+            f"id: {dest.id}\n"
+            f"📛項目名: {dest.name}\n"
+            f"👤対象: <@&{dest.role_id}>\n"
+            f"⏰期限: {discord.utils.format_dt(dt, style='F')}\n"
+            f"💾種類: {dest.format}\n"
+            f"設定者: {handler_role.mention}",
             color=discord.Color.green(),
         )
         await interaction.response.send_message(embed=embed)
@@ -139,11 +139,11 @@ class DestManager(commands.Cog):
                 handler_role = self.bot.guild.get_role(dest.handler_id)
                 embed = discord.Embed(
                     description=f"id: {dest.id}\n"
-                                f"📛項目名: {dest.name}\n"
-                                f"👤対象: <@&{dest.role_id}>\n"
-                                f"⏰期限: {discord.utils.format_dt(dt, style='F')}\n"
-                                f"💾種類: {dest.format}\n"
-                                f"設定者: {handler_role.mention}",
+                    f"📛項目名: {dest.name}\n"
+                    f"👤対象: <@&{dest.role_id}>\n"
+                    f"⏰期限: {discord.utils.format_dt(dt, style='F')}\n"
+                    f"💾種類: {dest.format}\n"
+                    f"設定者: {handler_role.mention}",
                     color=discord.Color.green(),
                 )
                 embeds.append(embed)
