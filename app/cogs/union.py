@@ -97,6 +97,18 @@ class UnionManager(commands.Cog):
         await interaction.response.send_message(
             f"{union_type}の{union_name}を{new_name}に改名"
         )
+    
+    @commands.Cog.listener()
+    async def on_member_update(self, before, after):
+        # ロールが追加されたとき以外をreturn
+        if not list(set(after.roles) - set(before.roles)):
+            return
+        added_role = list(set(after.roles) - set(before.roles))[0]
+        if not database.is_union_exist(union_role_id=added_role.id):
+            return
+        union = database.Union(role_id=added_role.id)
+        parent_role = discord.utils.get(self.bot.guild.roles, name=union.type)
+        await after.add_roles(parent_role)
 
 
 async def setup(bot):
