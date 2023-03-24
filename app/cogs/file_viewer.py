@@ -3,12 +3,19 @@ import discord
 import pdf2image
 import asyncio
 import io
+import os
+from mylib import PDFConverter
 
 
 class FileViewer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.supported_extensions = ["application/pdf"]
+        self.supported_extensions = [
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ]
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -17,14 +24,15 @@ class FileViewer(commands.Cog):
         if message.channel.type != discord.ChannelType.text:
             return
         # 添付されたファイルの中に対応している拡張子がなければ無視
-        attachment_content_type_list = [
-            attachment.content_type for attachment in message.attachments
+        attachments = [
+            attachment
+            for attachment in message.attachments
+            if attachment.content_type in self.supported_extensions
         ]
-        if len(set(attachment_content_type_list) & set(self.supported_extensions)) == 0:
+        if len(attachments) == 0:
             return
-
-        thread = await message.create_thread(name=message.attachments[0].filename)
-        for attachment in message.attachments:
+        thread = await message.create_thread(name=attachments[0].filename)
+        for attachment in attachments:
             loop = asyncio.get_running_loop()
             images = []
             # pdf -> jpeg
@@ -34,8 +42,17 @@ class FileViewer(commands.Cog):
                 images = await loop.run_in_executor(
                     None, pdf2image.convert_from_bytes, pdf_io.read()
                 )
-            else:
-                continue
+            elif attachment.content_type in self.supported_extensions:
+                await attachment.save(attachment.filename)
+                converter = PDFConverter(attachment.filename, ".")
+                await loop.run_in_executor(None, converter.start)
+                images = await loop.run_in_executor(
+                    None,
+                    pdf2image.convert_from_path,
+                    attachment.filename.split(".")[0] + ".pdf",
+                )
+                os.remove(attachment.filename)
+                os.remove(attachment.filename.split(".")[0] + ".pdf")
 
             await thread.send(
                 embed=discord.Embed(
