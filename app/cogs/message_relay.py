@@ -1,5 +1,6 @@
-from discord.ext import commands
+# 外部モジュール
 import discord
+from discord.ext import commands
 
 
 class RelaySelect(discord.ui.View):

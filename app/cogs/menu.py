@@ -1,6 +1,9 @@
-from discord.ext import commands
-from mylib import database
+# 外部モジュール
 import discord
+from discord.ext import commands
+
+# 内部モジュール
+from mylib import database
 
 
 class UnionMenuButtons(discord.ui.View):

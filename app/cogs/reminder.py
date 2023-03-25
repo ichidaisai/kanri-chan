@@ -1,8 +1,10 @@
-from discord.ext import commands, tasks
+# 外部モジュール
 import datetime
 import discord
-from mylib import database
-from mylib.errors import UnionNotExist
+from discord.ext import commands, tasks
+
+# 内部モジュール
+from mylib import database, UnionNotExist
 
 
 class Reminder(commands.Cog):

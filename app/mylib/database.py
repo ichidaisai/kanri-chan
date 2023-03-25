@@ -1,4 +1,7 @@
+# 外部モジュール
 import dataset
+
+# 内部モジュール
 from .errors import *
 
 

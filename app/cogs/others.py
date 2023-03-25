@@ -1,10 +1,13 @@
-from discord.ext import commands
-from discord import app_commands, file
-import discord
-from constant import SERVER_ID
-import io
+# 外部モジュール
 import cv2
+import discord
+from discord.ext import commands
+from discord import app_commands
+import io
 import numpy as np
+
+# 内部モジュール
+from constant import SERVER_ID
 
 
 class Others(commands.Cog):

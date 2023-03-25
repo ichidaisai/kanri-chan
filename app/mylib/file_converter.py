@@ -1,8 +1,8 @@
+import glob
+import logging
 import os
 import subprocess
 import shutil
-import glob
-import logging
 
 
 default_user_profile = os.environ["HOME"] + "/.config/libreoffice/4/user"

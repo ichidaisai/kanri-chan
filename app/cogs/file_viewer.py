@@ -1,9 +1,12 @@
-from discord.ext import commands
-import discord
-import pdf2image
+# 外部モジュール
 import asyncio
+import discord
+from discord.ext import commands
 import io
 import os
+import pdf2image
+
+#内部モジュール
 from mylib import PDFConverter
 
 

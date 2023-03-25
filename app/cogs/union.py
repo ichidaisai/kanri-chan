@@ -1,9 +1,12 @@
-from discord.ext import commands
-from discord import app_commands
+# 外部モジュール
 import discord
-from mylib import database
-from constant import SERVER_ID
+from discord import app_commands
+from discord.ext import commands
 from typing import Literal
+
+# 内部モジュール
+from constant import SERVER_ID
+from mylib import database
 
 
 @app_commands.guilds(discord.Object(id=SERVER_ID))

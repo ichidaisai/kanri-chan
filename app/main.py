@@ -1,8 +1,10 @@
-import os
-import logging
-
+# 外部モジュール
 import discord
 from discord.ext import commands
+import logging
+import os
+
+# 内部モジュール
 from constant import TOKEN, SERVER_ID, RELAYING_CATEGORY_ID
 
 

@@ -1,17 +1,20 @@
-from discord.ext import commands
-import discord
-from mylib import database, utils
+# 外部モジュール
 import asyncio
 import datetime
-from constant import SERVER_ID, GOOGLE_DRIVE_FOLDER_ID, NOTICE_CATEGORY_ID
+import discord
 from discord import app_commands
+from discord.ext import commands
 import io
-import pandas as pd
 import os
-import zipfile
-import shutil
+import pandas as pd
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
+import shutil
+import zipfile
+
+# 内部モジュール
+from constant import SERVER_ID, GOOGLE_DRIVE_FOLDER_ID, NOTICE_CATEGORY_ID
+from mylib import database, utils
 
 
 class Document(commands.Cog):
