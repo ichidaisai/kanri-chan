@@ -30,7 +30,9 @@ class Others(commands.Cog):
         is_success, buffer = cv2.imencode(".jpg", img)
         out_image = io.BytesIO(buffer)
         out_image.seek(0)
-        await interaction.response.send_message(files=[discord.File(fp=out_image, filename="grayscale.png")])
+        await interaction.response.send_message(
+            files=[discord.File(fp=out_image, filename="grayscale.png")]
+        )
 
 
 async def setup(bot):
