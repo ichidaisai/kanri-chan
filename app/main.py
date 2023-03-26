@@ -26,7 +26,11 @@ class KanriChan(commands.Bot):
 
     async def on_ready(self):
         self.guild = self.get_guild(SERVER_ID)
+        if self.guild is None:
+            raise Exception("guildが正しく指定されていません。")
         self.category_channel = self.guild.get_channel(RELAYING_CATEGORY_ID)
+        if not isinstance(self.category_channel, discord.CategoryChannel):
+            raise Exception("category_channelが正しく指定されていません。")
         message_relay = self.get_cog("MessageRelay")
         for channel in self.category_channel.text_channels:
             await message_relay.setup_select(channel)

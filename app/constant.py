@@ -3,11 +3,21 @@ from os import getenv
 
 load_dotenv()
 
+
+if (TOKEN := getenv("TOKEN")) is None:
+    raise Exception("TOKEN is None")
+if (SERVER_ID := getenv("SERVER_ID")) is None:
+    raise Exception("SERVER_ID is None")
+if (RELAYING_CATEGORY_ID := getenv("RELAYING_CATEGORY_ID")) is None:
+    raise Exception("RELAYING_CATEGORY_ID is None")
+if (NOTICE_CATEGORY_ID := getenv("NOTICE_CATEGORY_ID")) is None:
+    raise Exception("NOTICE_CATEGORY_ID is None")
+if (GOOGLE_DRIVE_FOLDER_ID := getenv("GOOGLE_DRIVE_FOLDER_ID")) is None:
+    raise Exception("GOOGLE_DRIVE_FOLDER_ID is None")
+
 try:
-    TOKEN = getenv("TOKEN")
-    SERVER_ID = int(getenv("SERVER_ID"))
-    RELAYING_CATEGORY_ID = int(getenv("RELAYING_CATEGORY_ID"))
-    NOTICE_CATEGORY_ID = int(getenv("NOTICE_CATEGORY_ID"))
-    GOOGLE_DRIVE_FOLDER_ID = getenv("GOOGLE_DRIVE_FOLDER_ID")
-except Exception:
-    raise Exception("必要な環境変数が正しく指定されていません。")
+    SERVER_ID = int(SERVER_ID)
+    RELAYING_CATEGORY_ID = int(RELAYING_CATEGORY_ID)
+    NOTICE_CATEGORY_ID = int(NOTICE_CATEGORY_ID)
+except ValueError:
+    raise ValueError("正しく環境変数を指定してください。")
