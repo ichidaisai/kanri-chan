@@ -6,7 +6,7 @@ import io
 import os
 import pdf2image
 
-#内部モジュール
+# 内部モジュール
 from mylib import PDFConverter
 
 
