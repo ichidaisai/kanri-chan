@@ -1,4 +1,6 @@
 # 外部モジュール
+import discord
+from discord import app_commands
 from discord.ext import commands
 
 # 内部モジュール
@@ -17,6 +19,41 @@ READ_EMOJI = "\U00002705"  # ✅
 class MessageReadState(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.ctx_menu = app_commands.ContextMenu(
+            name="既読確認",
+            callback=self.check_read_log,
+        )
+        self.bot.tree.add_command(self.ctx_menu)
+
+    @app_commands.checks.has_role("委員会")
+    @app_commands.guilds(discord.Object(id=SERVER_ID))
+    async def check_read_log(self, interaction, message: discord.Message):
+        if not isinstance(message.channel, discord.TextChannel):
+            return
+        if message.channel.category_id not in (
+            ALL_ANNOUNCE_CATEGORY_ID,
+            OUTSIDE_ANNOUNCE_CATEGORY_ID,
+            INSIDE_ANNOUNCE_CATEGORY_ID,
+        ):
+            return await interaction.response.send_message(
+                "このチャンネルでは使用できません。", ephemeral=True
+            )
+        union_list = database.get_all_union()
+        read_table = ""
+        not_read_table = ""
+        for union in union_list:
+            if database.is_read_log_exist(
+                channel_id=message.channel.id, message_id=message.id, union_id=union.id
+            ):
+                read_table += f"{union.name}:  ✅\n"
+            else:
+                not_read_table += f"{union.name}:  ❌\n"
+        embed = discord.Embed(
+            title="既読状況",
+            description=f"読んだ団体\n{read_table}\n読んでない団体\n{not_read_table}",
+            color=discord.Color.green(),
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @commands.Cog.listener()
     async def on_message(self, message):
