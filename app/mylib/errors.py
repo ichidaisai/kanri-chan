@@ -12,3 +12,7 @@ class DestNotExist(Exception):
 
 class DocumentNotExist(Exception):
     pass
+
+
+class ReadLogNotExist(Exception):
+    pass
