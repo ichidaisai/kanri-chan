@@ -11,6 +11,7 @@ db = dataset.connect(DATABASE)
 union_table = db["union_table"]
 dest_table = db["dest_table"]
 document_table = db["document_table"]
+read_log_table = db["read_log_table"]
 
 
 def is_union_exist(union_name=None, union_type=None, union_role_id=None):
@@ -124,3 +125,51 @@ class Document:
 
     def delete(self):
         document_table.delete(id=self.id)
+
+
+def is_read_log_exist(channel_id, message_id, union_id):
+    return (
+        read_log_table.find_one(
+            channel_id=channel_id, message_id=message_id, union_id=union_id
+        )
+        is not None
+    )
+
+
+def get_read_logs(channel_id, message_id):
+    read_log_id_list = [
+        data["id"]
+        for data in read_log_table.all()
+        if data["channel_id"] == channel_id and data["message_id"] == message_id
+    ]
+    return [ReadLog(id=read_log_id) for read_log_id in read_log_id_list]
+
+
+class ReadLog:
+    def __init__(
+        self, id=None, channel_id=None, message_id=None, member_id=None, union_id=None
+    ):
+        if id:
+            data = read_log_table.find_one(id=id)
+        elif channel_id and message_id and member_id and union_id:
+            data = read_log_table.find_one(
+                channel_id=channel_id,
+                message_id=message_id,
+                member_id=member_id,
+                union_id=union_id,
+            )
+        else:
+            raise MissingRequiredArgument()
+        if data is None:
+            raise ReadLogNotExist()
+        self.id = data["id"]
+        self.channel_id = data["channel_id"]
+        self.message_id = data["message_id"]
+        self.member_id = data["member_id"]
+        self.union_id = data["union_id"]
+
+    def update(self):
+        read_log_table.update(vars(self), ["id"])
+
+    def delete(self):
+        read_log_table.delete(id=self.id)
