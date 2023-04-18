@@ -39,8 +39,8 @@ class Menu(commands.Cog):
         self.bot = bot
 
     # 出店者用
-    @commands.Cog.listener()
-    async def on_message(self, message):
+    @commands.Cog.listener(name="on_message")
+    async def union_menu(self, message):
         if message.author.bot:
             return
         if message.content != "メニュー":
@@ -51,6 +51,49 @@ class Menu(commands.Cog):
         union = database.Union(id=data["id"])
         document_cog = self.bot.get_cog("Document")
         await message.channel.send("メニュー", view=UnionMenuButtons(document_cog, union))
+
+    # 委員会用
+    @commands.has_role("委員会")
+    @commands.Cog.listener(name="on_message")
+    async def host_menu(self, message):
+        if message.author.bot:
+            return
+        if message.content != "メニュー":
+            return
+        data = database.union_table.find_one(channel_id=message.channel.id)
+        if data:
+            return
+        embeds = [
+            discord.Embed(
+                title="団体関係コマンド",
+                description=", ".join(
+                    [cmd.mention for cmd in self.bot.app_commands_dict["団体"]]
+                ),
+                color=discord.Color.blurple(),
+            ),
+            discord.Embed(
+                title="提出先関係コマンド",
+                description=", ".join(
+                    [cmd.mention for cmd in self.bot.app_commands_dict["提出先"]]
+                ),
+                color=discord.Color.green(),
+            ),
+            discord.Embed(
+                title="提出物関係コマンド",
+                description=", ".join(
+                    [cmd.mention for cmd in self.bot.app_commands_dict["提出物"]]
+                ),
+                color=discord.Color.yellow(),
+            ),
+            discord.Embed(
+                title="その他コマンド",
+                description=", ".join(
+                    [cmd.mention for cmd in self.bot.app_commands_dict["その他"]]
+                ),
+                color=discord.Color.brand_red(),
+            ),
+        ]
+        await message.channel.send(embeds=embeds)
 
 
 async def setup(bot):

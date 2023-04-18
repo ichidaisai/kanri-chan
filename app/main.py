@@ -22,7 +22,16 @@ class KanriChan(commands.Bot):
             if cog in ["__pycache__", "mylib"]:
                 continue
             await self.load_extension(f"cogs.{cog[:-3]}")
-        await self.tree.sync(guild=discord.Object(id=SERVER_ID))
+        self.app_commands = await self.tree.sync(guild=discord.Object(id=SERVER_ID))
+        self.app_commands_dict = {"団体": [], "提出先": [], "提出物": [], "その他": []}
+        for app_command in self.app_commands:
+            if app_command.name in ["団体", "提出先", "提出物"]:
+                for cmd in app_command.options:
+                    self.app_commands_dict[app_command.name].append(cmd)
+            elif app_command.name == "既読確認":
+                continue
+            else:
+                self.app_commands_dict["その他"].append(app_command)
 
     async def on_ready(self):
         self.guild = self.get_guild(SERVER_ID)
