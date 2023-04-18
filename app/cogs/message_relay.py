@@ -150,6 +150,7 @@ class MessageRelay(commands.Cog):
             content=message.content, username=name, avatar_url=icon_url, files=files
         )
 
+    @commands.has_role("委員会")
     @commands.command()
     async def reload_select(self, ctx):
         for channel in self.bot.category_channel.text_channels:
