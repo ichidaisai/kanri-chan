@@ -27,11 +27,13 @@ class DestManager(commands.Cog):
         target_role="提出を課す団体をロールで指定",
         document_format="提出形式を選択",
         handler_role="作成元を指定",
+        limit="提出期限を YYYY/MM/DD hh:mm の形で指定"
     )
     @app_commands.rename(dest_name="提出先名")
     @app_commands.rename(target_role="団体")
     @app_commands.rename(document_format="提出形式")
     @app_commands.rename(handler_role="設定者")
+    @app_commands.rename(limit="提出期限")
     @dest_group.command(name="作成", description="提出先作成")
     async def make_dest(
         self,
@@ -40,37 +42,12 @@ class DestManager(commands.Cog):
         target_role: discord.Role,
         document_format: Literal["プレーンテキスト", "ファイル"],
         handler_role: discord.Role,
+        limit: str
     ):
-        def check(m):
-            return (
-                m.channel == interaction.channel
-                and m.author == interaction.user
-                and len(m.content) != 0
-            )
-
-        # limit
-        await interaction.response.send_message(
-            "⏰ 提出期限を指定してください。\n入力例: 2023年4月1日 8時30分 としたい場合は、`2023/4/1 08:30` と入力します。"
-        )
-        ask_msg = await interaction.original_response()
-        try:
-            msg = await self.bot.wait_for("message", check=check, timeout=60)
-        except asyncio.TimeoutError:
-            return await ask_msg.edit(
-                content="⚠ タイムアウトしました。もう一度、最初から操作をやり直してください。", delete_after=10
-            )
-        if not utils.is_datetime(msg.content):
-            return await ask_msg.edit(
-                content="⚠ 指定された期限をうまく解釈できませんでした。\n"
-                "入力例: 2022年4月1日 8時30分 としたい場合は、`2022/4/1 08:30` と入力します。\n"
-                "もう一度、最初から操作をやり直してください。",
-                delete_after=10,
-            )
-        dest_limit = datetime.datetime.strptime(msg.content, "%Y/%m/%d %H:%M")
+        dest_limit = datetime.datetime.strptime(limit, "%Y/%m/%d %H:%M")
         if dest_limit < datetime.datetime.now():
-            await msg.delete()
-            return await ask_msg.edit(
-                content="⚠ 提出期限が過去に設定されています。\nもう一度、最初からやり直してください。", delete_after=10
+            return await interaction.response.send_message(
+                content="⚠ 提出期限が過去に設定されています。\nもう一度、最初からやり直してください。",
             )
         database.dest_table.insert(
             dict(
@@ -91,8 +68,7 @@ class DestManager(commands.Cog):
             f"設定者: {handler_role.mention}",
             color=discord.Color.green(),
         )
-        await msg.delete()
-        await ask_msg.edit(content=None, embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @app_commands.describe(id="削除する提出先のid")
     @dest_group.command(name="削除", description="提出先を削除")
