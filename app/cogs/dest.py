@@ -27,7 +27,7 @@ class DestManager(commands.Cog):
         target_role="提出を課す団体をロールで指定",
         document_format="提出形式を選択",
         handler_role="作成元を指定",
-        limit="提出期限を YYYY/MM/DD hh:mm の形で指定"
+        limit="提出期限を YYYY/MM/DD hh:mm の形で指定",
     )
     @app_commands.rename(dest_name="提出先名")
     @app_commands.rename(target_role="団体")
@@ -42,7 +42,7 @@ class DestManager(commands.Cog):
         target_role: discord.Role,
         document_format: Literal["プレーンテキスト", "ファイル"],
         handler_role: discord.Role,
-        limit: str
+        limit: str,
     ):
         dest_limit = datetime.datetime.strptime(limit, "%Y/%m/%d %H:%M")
         if dest_limit < datetime.datetime.now():

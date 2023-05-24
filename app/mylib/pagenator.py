@@ -24,8 +24,12 @@ class Pagenator(discord.ui.View):
         self.current_page = self.initial_page
         self.message = None
 
-        self.back_button = discord.ui.Button(emoji=discord.PartialEmoji(name="\U000025c0"))
-        self.next_button = discord.ui.Button(emoji=discord.PartialEmoji(name="\U000025b6"))
+        self.back_button = discord.ui.Button(
+            emoji=discord.PartialEmoji(name="\U000025c0")
+        )
+        self.next_button = discord.ui.Button(
+            emoji=discord.PartialEmoji(name="\U000025b6")
+        )
         self.page_counter_style = discord.ButtonStyle.grey
         self.back_button.callback = self.back_button_callback
         self.next_button.callback = self.next_button_callback
@@ -40,7 +44,9 @@ class Pagenator(discord.ui.View):
 
     async def start(self):
         self.message = await self.ctx.send(
-            embeds=self.embed_pages[self.initial_page], view=self, ephemeral=self.ephemeral
+            embeds=self.embed_pages[self.initial_page],
+            view=self,
+            ephemeral=self.ephemeral,
         )
 
     async def go_back(self):
