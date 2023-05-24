@@ -14,7 +14,7 @@ import zipfile
 
 # 内部モジュール
 from constant import SERVER_ID, GOOGLE_DRIVE_FOLDER_ID, NOTICE_CATEGORY_ID
-from mylib import database, utils
+from mylib import database, utils, Pagenator
 
 
 class Document(commands.Cog):
@@ -104,13 +104,12 @@ class Document(commands.Cog):
         )
         await notice_channel.send(content="🔔 新しい提出があります。", embed=embed)
 
-    async def check_dest(self, interaction, union):
+    async def check_dest(self, interaction, ctx, union):
         """未提出の提出先を確認"""
         all_dest = database.get_all_dest()
         if len(all_dest) == 0:
             return await interaction.channel.send("提出先が存在しません。")
         embeds = []
-        count = 1
         for dest in all_dest:
             role = self.bot.guild.get_role(dest.role_id)
             if role not in interaction.user.roles:
@@ -129,22 +128,20 @@ class Document(commands.Cog):
                 color=discord.Color.green(),
             )
             embeds.append(embed)
-            count += 1
         if len(embeds) == 0:
             return await interaction.channel.send("提出先が存在しません。")
-        all_embeds = [embeds[idx : idx + 10] for idx in range(0, len(embeds), 10)]
-        for embeds in all_embeds:
-            await interaction.channel.send(embeds=embeds)
+        all_embeds = [embeds[idx : idx + 5] for idx in range(0, len(embeds), 5)]
+        await Pagenator(embed_pages=all_embeds, ctx=ctx).start()
 
-    async def document_list(self, interaction, union):
+    async def document_list(self, interaction, ctx, union):
         """提出したものを閲覧"""
         document_list = database.get_documents(union_id=union.id)
         if len(document_list) == 0:
             return await interaction.channel.send("まだ提出していません。")
         all_document = [
-            document_list[idx : idx + 10] for idx in range(0, len(document_list), 10)
+            document_list[idx : idx + 5] for idx in range(0, len(document_list), 5)
         ]
-        count = 1
+        all_embeds = []
         for document_container in all_document:
             embeds = []
             for document in document_container:
@@ -158,10 +155,8 @@ class Document(commands.Cog):
                     color=discord.Color.green(),
                 )
                 embeds.append(embed)
-                count += 1
-            await interaction.channel.send(
-                f"{count-len(embeds)}~{count-1}", embeds=embeds
-            )
+            all_embeds.append(embeds)
+        await Pagenator(embed_pages=all_embeds, ctx=ctx).start()
 
 
 @app_commands.guilds(discord.Object(id=SERVER_ID))

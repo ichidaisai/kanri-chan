@@ -7,9 +7,10 @@ from mylib import database
 
 
 class UnionMenuButtons(discord.ui.View):
-    def __init__(self, cog, union):
+    def __init__(self, cog, ctx, union):
         super().__init__(timeout=None)
         self.cog = cog
+        self.ctx = ctx
         self.union = union
 
     @discord.ui.button(label="提出する", style=discord.ButtonStyle.green)
@@ -24,14 +25,14 @@ class UnionMenuButtons(discord.ui.View):
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
         await interaction.response.send_message("提出物確認プロセスを開始します。")
-        await self.cog.check_dest(interaction, self.union)
+        await self.cog.check_dest(interaction, self.ctx, self.union)
 
     @discord.ui.button(label="提出したものを確認", style=discord.ButtonStyle.blurple)
     async def document_list(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
         await interaction.response.send_message("提出物確認プロセスを開始します。")
-        await self.cog.document_list(interaction, self.union)
+        await self.cog.document_list(interaction, self.ctx, self.union)
 
 
 class Menu(commands.Cog):
@@ -50,7 +51,8 @@ class Menu(commands.Cog):
             return
         union = database.Union(id=data["id"])
         document_cog = self.bot.get_cog("Document")
-        await message.channel.send("メニュー", view=UnionMenuButtons(document_cog, union))
+        ctx = await self.bot.get_context(message)
+        await message.channel.send("メニュー", view=UnionMenuButtons(document_cog, ctx, union))
 
     # 委員会用
     @commands.has_role("委員会")

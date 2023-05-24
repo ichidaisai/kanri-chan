@@ -8,7 +8,7 @@ from typing import Literal
 
 # 内部モジュール
 from constant import SERVER_ID
-from mylib import database, utils
+from mylib import database, utils, Pagenator
 
 
 @app_commands.guilds(discord.Object(id=SERVER_ID))
@@ -107,8 +107,8 @@ class DestManager(commands.Cog):
             return await interaction.response.send_message(
                 "提出先は存在しません。", delete_after=10
             )
-        all_dest = [all_dest[idx : idx + 10] for idx in range(0, dest_count, 10)]
-        count = 1
+        all_dest = [all_dest[idx : idx + 5] for idx in range(0, dest_count, 5)]
+        embed_container = []
         for dest_container in all_dest:
             embeds = []
             for dest in dest_container:
@@ -124,11 +124,9 @@ class DestManager(commands.Cog):
                     color=discord.Color.green(),
                 )
                 embeds.append(embed)
-                count += 1
-            await interaction.channel.send(
-                f"{count-len(embeds)}~{count-1}", embeds=embeds
-            )
-        await interaction.response.send_message(f"合計{dest_count}個")
+            embed_container.append(embeds)
+        ctx = await commands.Context.from_interaction(interaction)
+        await Pagenator(embed_pages=embed_container, ctx=ctx).start()
 
 
 async def setup(bot):
