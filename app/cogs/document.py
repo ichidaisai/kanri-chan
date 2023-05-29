@@ -42,6 +42,10 @@ class Document(commands.Cog):
             return await interaction.channel.send(
                 content="idではない返答を受け取りました。もう一度、最初から操作をやり直してください。"
             )
+        if not database.is_dest_exist(dest_id=dest_id):
+            return await interaction.channel.send(
+                content="存在しない提出先のIDを受け取りました。もう一度、最初から操作をやり直してください。"
+            )
         dest = database.Dest(id=dest_id)
         now = datetime.datetime.now()
         now = now.replace(minute=now.minute, second=0, microsecond=0)
