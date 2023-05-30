@@ -110,7 +110,8 @@ class Document(commands.Cog):
 
     async def check_dest(self, interaction, ctx, union):
         """未提出の提出先を確認"""
-        all_dest = database.get_all_dest()
+        type_role = discord.utils.get(self.bot.guild.roles, name=union.type)
+        all_dest = database.get_dests(type_role.id) + database.get_dests(union.role_id)
         if len(all_dest) == 0:
             return await interaction.channel.send("提出先が存在しません。")
         embeds = []
