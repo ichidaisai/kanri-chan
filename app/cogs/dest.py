@@ -27,13 +27,15 @@ class DestManager(commands.Cog):
         target_role="提出を課す団体をロールで指定",
         document_format="提出形式を選択",
         handler_role="作成元を指定",
-        limit="提出期限を YYYY/MM/DD hh:mm の形で指定",
+        date="提出期限の日付を MM/DDの形で指定",
+        time="提出期限の時間を hh:mmの形で指定",
     )
     @app_commands.rename(dest_name="提出先名")
     @app_commands.rename(target_role="団体")
     @app_commands.rename(document_format="提出形式")
     @app_commands.rename(handler_role="設定者")
-    @app_commands.rename(limit="提出期限")
+    @app_commands.rename(date="日付")
+    @app_commands.rename(date="時間")
     @dest_group.command(name="作成", description="提出先作成")
     async def make_dest(
         self,
@@ -42,9 +44,10 @@ class DestManager(commands.Cog):
         target_role: discord.Role,
         document_format: Literal["プレーンテキスト", "ファイル"],
         handler_role: discord.Role,
-        limit: str,
+        date: str,
+        time: str="23:59",
     ):
-        dest_limit = datetime.datetime.strptime(limit, "%Y/%m/%d %H:%M")
+        dest_limit = datetime.datetime.strptime(f"2023/{date} {time}", "%Y/%m/%d %H:%M")
         if dest_limit < datetime.datetime.now():
             return await interaction.response.send_message(
                 content="⚠ 提出期限が過去に設定されています。\nもう一度、最初からやり直してください。",
