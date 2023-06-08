@@ -21,7 +21,34 @@ class Document(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def submit_document(self, interaction, union):
+    async def submit_document(self, interaction, ctx, union):
+        type_role = discord.utils.get(self.bot.guild.roles, name=union.type)
+        all_dest = database.get_dests(type_role.id) + database.get_dests(union.role_id)
+        if len(all_dest) == 0:
+            return await interaction.channel.send("提出先が存在しません。")
+        embeds = []
+        for dest in all_dest:
+            role = self.bot.guild.get_role(dest.role_id)
+            if role not in interaction.user.roles:
+                continue
+            if database.is_document_exist(dest_id=dest.id, union_id=union.id):
+                continue
+            dt = datetime.datetime.fromtimestamp(dest.limit)
+            handler_role = self.bot.guild.get_role(dest.handler_id)
+            embed = discord.Embed(
+                description=f"id: {dest.id}\n"
+                f"📛項目名: {dest.name}\n"
+                f"👤対象: {role.mention}\n"
+                f"⏰期限: {dt.strftime('%Y/%m/%d %H:%M:%S')}\n"
+                f"💾種類: {dest.format}\n"
+                f"設定者: {handler_role.mention}",
+                color=discord.Color.green(),
+            )
+            embeds.append(embed)
+        if len(embeds) == 0:
+            return await interaction.channel.send("提出先が存在しません。")
+        all_embeds = [embeds[idx : idx + 5] for idx in range(0, len(embeds), 5)]
+        await Pagenator(embed_pages=all_embeds, ctx=ctx).start()
         def check(m):
             return (
                 m.channel == interaction.channel

@@ -18,7 +18,7 @@ class UnionMenuButtons(discord.ui.View):
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
         await interaction.response.send_message("提出プロセスを開始します。")
-        await self.cog.submit_document(interaction, self.union)
+        await self.cog.submit_document(interaction, self.ctx, self.union)
 
     @discord.ui.button(label="未提出を確認", style=discord.ButtonStyle.red)
     async def check_dest(
