@@ -26,6 +26,7 @@ class Document(commands.Cog):
         all_dest = database.get_dests(type_role.id) + database.get_dests(union.role_id)
         if len(all_dest) == 0:
             return await interaction.channel.send("提出先が存在しません。")
+        all_dest = utils.sort_dests_for_limit(all_dest)
         embeds = []
         for dest in all_dest:
             role = self.bot.guild.get_role(dest.role_id)
@@ -141,6 +142,7 @@ class Document(commands.Cog):
         all_dest = database.get_dests(type_role.id) + database.get_dests(union.role_id)
         if len(all_dest) == 0:
             return await interaction.channel.send("提出先が存在しません。")
+        all_dest = utils.sort_dests_for_limit(all_dest)
         embeds = []
         for dest in all_dest:
             role = self.bot.guild.get_role(dest.role_id)

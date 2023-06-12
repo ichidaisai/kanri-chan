@@ -1,4 +1,5 @@
 import datetime
+from operator import attrgetter
 import re
 
 
@@ -25,3 +26,7 @@ async def get_message_from_url(url, guild):
         return
     message = await channel.fetch_message(int(ids["message"]))
     return message
+
+
+def sort_dests_for_limit(dests):
+    return sorted(dests, key=attrgetter("limit", "id"))
