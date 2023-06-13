@@ -57,6 +57,8 @@ class MessageReadState(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        if isinstance(message.channel, discord.DMChannel):
+            return
         if message.channel.category_id not in (
             ALL_ANNOUNCE_CATEGORY_ID,
             OUTSIDE_ANNOUNCE_CATEGORY_ID,
@@ -68,6 +70,8 @@ class MessageReadState(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         channel = self.bot.get_channel(payload.channel_id)
+        if channel is None:
+            return
         if channel.category_id not in (
             ALL_ANNOUNCE_CATEGORY_ID,
             OUTSIDE_ANNOUNCE_CATEGORY_ID,
