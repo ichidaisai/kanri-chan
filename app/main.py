@@ -5,7 +5,7 @@ import logging
 import os
 
 # 内部モジュール
-from constant import TOKEN, SERVER_ID, RELAYING_CATEGORY_ID
+from constant import TOKEN, SERVER_ID, ARCHIVE_CATEGORY_ID, RELAYING_CATEGORY_ID
 
 
 class KanriChan(commands.Bot):
@@ -37,6 +37,9 @@ class KanriChan(commands.Bot):
         self.guild = self.get_guild(SERVER_ID)
         if self.guild is None:
             raise Exception("guildが正しく指定されていません。")
+        self.archive_category = self.guild.get_channel(ARCHIVE_CATEGORY_ID)
+        if self.archive_category is None:
+            raise Exception("ARCHIVE_CATEGORY_IDが正しく指定されていません。")
         self.category_channel = self.guild.get_channel(RELAYING_CATEGORY_ID)
         if not isinstance(self.category_channel, discord.CategoryChannel):
             raise Exception("category_channelが正しく指定されていません。")

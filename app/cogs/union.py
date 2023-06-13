@@ -59,7 +59,7 @@ class UnionManager(commands.Cog):
         channel = self.bot.guild.get_channel(union.channel_id)
         role = self.bot.guild.get_role(union.role_id)
         if channel and role:
-            await channel.delete()
+            await channel.edit(category=self.bot.archive_category)
             await role.delete()
         else:
             return await interaction.response.send_message(
