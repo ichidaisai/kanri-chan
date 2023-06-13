@@ -52,8 +52,9 @@ class Menu(commands.Cog):
         union = database.Union(id=data["id"])
         document_cog = self.bot.get_cog("Document")
         ctx = await self.bot.get_context(message)
+        await message.channel.send("メニュー")
         await message.channel.send(
-            "メニュー", view=UnionMenuButtons(document_cog, ctx, union)
+            view=UnionMenuButtons(document_cog, ctx, union), delete_after=60
         )
 
     # 委員会用
