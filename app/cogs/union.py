@@ -25,7 +25,7 @@ class UnionManager(commands.Cog):
     @app_commands.rename(union_name="出店名")
     @union_group.command(name="作成", description="団体のチャンネル、ロールを作成")
     async def union_make(
-        self, interaction, union_type: Literal["屋外", "屋内"], union_name: str
+        self, interaction, union_type: Literal["カフェ", "模擬"], union_name: str
     ):
         union_names = "".join(union_name.split(",")).split()
         for name in union_names:
@@ -50,7 +50,7 @@ class UnionManager(commands.Cog):
     @app_commands.rename(union_name="出店名")
     @union_group.command(name="削除", description="団体のチャンネル、ロールを削除")
     async def union_delete(
-        self, interaction, union_type: Literal["屋外", "屋内"], union_name: str
+        self, interaction, union_type: Literal["カフェ", "模擬"], union_name: str
     ):
         if not database.is_union_exist(union_name, union_type):
             return await interaction.response.send_message(f"{union_name}は存在しない団体名です。")
@@ -77,7 +77,7 @@ class UnionManager(commands.Cog):
     async def union_rename(
         self,
         interaction,
-        union_type: Literal["屋外", "屋内"],
+        union_type: Literal["カフェ", "模擬"],
         union_name: str,
         new_name: str,
     ):

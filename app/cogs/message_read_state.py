@@ -7,8 +7,8 @@ from discord.ext import commands
 from constant import (
     SERVER_ID,
     ALL_ANNOUNCE_CATEGORY_ID,
-    OUTSIDE_ANNOUNCE_CATEGORY_ID,
-    INSIDE_ANNOUNCE_CATEGORY_ID,
+    CAFE_ANNOUNCE_CATEGORY_ID,
+    MOGI_ANNOUNCE_CATEGORY_ID,
 )
 from mylib import database
 
@@ -32,8 +32,8 @@ class MessageReadState(commands.Cog):
             return
         if message.channel.category_id not in (
             ALL_ANNOUNCE_CATEGORY_ID,
-            OUTSIDE_ANNOUNCE_CATEGORY_ID,
-            INSIDE_ANNOUNCE_CATEGORY_ID,
+            CAFE_ANNOUNCE_CATEGORY_ID,
+            MOGI_ANNOUNCE_CATEGORY_ID,
         ):
             return await interaction.response.send_message(
                 "このチャンネルでは使用できません。", ephemeral=True
@@ -61,8 +61,8 @@ class MessageReadState(commands.Cog):
             return
         if message.channel.category_id not in (
             ALL_ANNOUNCE_CATEGORY_ID,
-            OUTSIDE_ANNOUNCE_CATEGORY_ID,
-            INSIDE_ANNOUNCE_CATEGORY_ID,
+            CAFE_ANNOUNCE_CATEGORY_ID,
+            MOGI_ANNOUNCE_CATEGORY_ID,
         ):
             return
         await message.add_reaction(READ_EMOJI)
@@ -74,8 +74,8 @@ class MessageReadState(commands.Cog):
             return
         if channel.category_id not in (
             ALL_ANNOUNCE_CATEGORY_ID,
-            OUTSIDE_ANNOUNCE_CATEGORY_ID,
-            INSIDE_ANNOUNCE_CATEGORY_ID,
+            CAFE_ANNOUNCE_CATEGORY_ID,
+            MOGI_ANNOUNCE_CATEGORY_ID,
         ):
             return
         for role in payload.member.roles:
