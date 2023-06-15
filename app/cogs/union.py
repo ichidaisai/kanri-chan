@@ -22,7 +22,7 @@ class UnionManager(commands.Cog):
 
     @app_commands.describe(union_type="団体をどちらに属させるかを選択", union_name="作成する団体の名前")
     @app_commands.rename(union_type="出店形式")
-    @app_commands.rename(union_name="出店名")
+    @app_commands.rename(union_name="団体名")
     @union_group.command(name="作成", description="団体のチャンネル、ロールを作成")
     async def union_make(
         self, interaction, union_type: Literal["カフェ", "模擬"], union_name: str
@@ -47,7 +47,7 @@ class UnionManager(commands.Cog):
 
     @app_commands.describe(union_type="削除する団体がどちらに属するのかを選択", union_name="削除する団体の名前")
     @app_commands.rename(union_type="出店形式")
-    @app_commands.rename(union_name="出店名")
+    @app_commands.rename(union_name="団体名")
     @union_group.command(name="削除", description="団体のチャンネル、ロールを削除")
     async def union_delete(
         self, interaction, union_type: Literal["カフェ", "模擬"], union_name: str
@@ -71,7 +71,7 @@ class UnionManager(commands.Cog):
         union_type="改名する団体がどちらに属するのかを選択", union_name="改名する団体の名前", new_name="新しい名前"
     )
     @app_commands.rename(union_type="出店形式")
-    @app_commands.rename(union_name="出店名")
+    @app_commands.rename(union_name="団体名")
     @app_commands.rename(new_name="新しい名前")
     @union_group.command(name="改名", description="団体のチャンネル、ロールの名前を変更")
     async def union_rename(
