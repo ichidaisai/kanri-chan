@@ -14,6 +14,7 @@ import zipfile
 
 # 内部モジュール
 from constant import SERVER_ID, GOOGLE_DRIVE_FOLDER_ID, NOTICE_CATEGORY_ID
+import mylib
 from mylib import database, utils, Pagenator
 
 
@@ -181,11 +182,14 @@ class Document(commands.Cog):
         for document_container in all_document:
             embeds = []
             for document in document_container:
-                dest = database.Dest(id=document.dest_id)
+                try:
+                    dest = database.Dest(id=document.dest_id)
+                except mylib.errors.DestNotExist:
+                    dest = None
                 role = self.bot.guild.get_role(union.role_id)
                 embed = discord.Embed(
                     description=f"id: {document.id}\n"
-                    f"提出先: {dest.name}\n"
+                    f"提出先: {dest.name if dest is not None else 'Unknown'}\n"
                     f"団体名: {role.mention}\n"
                     f"提出物: [jump]({document.msg_url})",
                     color=discord.Color.green(),
