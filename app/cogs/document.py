@@ -27,20 +27,22 @@ class Document(commands.Cog):
         if len(all_dest) == 0:
             return await interaction.channel.send("提出先が存在しません。")
         all_dest = utils.sort_dests_for_limit(all_dest)
+        now = datetime.datetime.now()
+        now = now.replace(minute=now.minute, second=0, microsecond=0)
         embeds = []
         for dest in all_dest:
+            limit_dt = datetime.datetime.fromtimestamp(dest.limit)
+            if now >= limit_dt:
+                continue
             role = self.bot.guild.get_role(dest.role_id)
             if role not in interaction.user.roles:
                 continue
-            if database.is_document_exist(dest_id=dest.id, union_id=union.id):
-                continue
-            dt = datetime.datetime.fromtimestamp(dest.limit)
             handler_role = self.bot.guild.get_role(dest.handler_id)
             embed = discord.Embed(
                 description=f"id: {dest.id}\n"
                 f"📛項目名: {dest.name}\n"
                 f"👤対象: {role.mention}\n"
-                f"⏰期限: {dt.strftime('%Y/%m/%d %H:%M:%S')}\n"
+                f"⏰期限: {limit_dt.strftime('%Y/%m/%d %H:%M:%S')}\n"
                 f"💾種類: {dest.format}\n"
                 f"設定者: {handler_role.mention}",
                 color=discord.Color.green(),
