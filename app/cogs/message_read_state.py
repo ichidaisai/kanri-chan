@@ -57,7 +57,7 @@ class MessageReadState(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if isinstance(message.channel, discord.DMChannel):
+        if not isinstance(message.channel, discord.TextChannel):
             return
         if message.channel.category_id not in (
             ALL_ANNOUNCE_CATEGORY_ID,
