@@ -45,7 +45,8 @@ class KanriChan(commands.Bot):
             raise Exception("category_channelが正しく指定されていません。")
         message_relay = self.get_cog("MessageRelay")
         for channel in self.category_channel.text_channels:
-            await message_relay.setup_select(channel)
+            # await message_relay.setup_select(channel)
+            pass
         discord.utils.setup_logging(level=logging.ERROR, root=False)
 
 
