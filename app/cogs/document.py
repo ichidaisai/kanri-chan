@@ -53,6 +53,7 @@ class Document(commands.Cog):
             return await interaction.channel.send("提出先が存在しません。")
         all_embeds = [embeds[idx : idx + 5] for idx in range(0, len(embeds), 5)]
         await Pagenator(embed_pages=all_embeds, ctx=ctx).start()
+
         def check(m):
             return (
                 m.channel == interaction.channel

@@ -45,7 +45,7 @@ class DestManager(commands.Cog):
         document_format: Literal["プレーンテキスト", "ファイル"],
         handler_role: discord.Role,
         date: str,
-        time: str="23:59",
+        time: str = "23:59",
     ):
         dest_limit = datetime.datetime.strptime(f"2023/{date} {time}", "%Y/%m/%d %H:%M")
         if dest_limit < datetime.datetime.now():
