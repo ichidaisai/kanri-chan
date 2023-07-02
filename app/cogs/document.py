@@ -352,7 +352,7 @@ class DocumentManager(commands.Cog):
                 embed = discord.Embed(
                     description=f"id: {document.id}\n"
                     f"提出先: {dest.name}\n"
-                    f"団体名: {union_role.mention}\n"
+                    f"団体名: {role.mention}\n"
                     f"提出物: [jump]({document.msg_url})",
                     color=discord.Color.green(),
                 )
