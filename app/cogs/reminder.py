@@ -68,7 +68,7 @@ class Reminder(commands.Cog):
             elif isinstance(abstract_channel, discord.TextChannel):
                 await self.send_reminder(dest, abstract_channel, now)
 
-        if now.weekday() == 0 and now.hour == 7 and now.minute == 0:  # 月曜日の午前7時0分
+        if now.weekday() == 0 and now.hour == 8 and now.minute == 0:  # 月曜日の午前7時0分
             for union in database.get_all_union():
                 role = discord.utils.get(self.bot.guild.roles, name=union.type)
                 dests_for_type = database.get_dests(role_id=role.id)
