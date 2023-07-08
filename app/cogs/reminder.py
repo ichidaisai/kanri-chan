@@ -86,7 +86,7 @@ class Reminder(commands.Cog):
                         break
                 else:
                     channel = self.bot.guild.get_channel(union.channel_id)
-                    await channel.send("✅ 今週が締切の提出物はありません")
+                    # await channel.send("✅ 今週が締切の提出物はありません")
 
     @reminder.before_loop
     async def before_reminder(self):
