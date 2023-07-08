@@ -176,6 +176,7 @@ class Document(commands.Cog):
         document_list = database.get_documents(union_id=union.id)
         if len(document_list) == 0:
             return await interaction.channel.send("まだ提出していません。")
+        document_list = utils.sort_documents_for_id(document_list)
         all_document = [
             document_list[idx : idx + 5] for idx in range(0, len(document_list), 5)
         ]

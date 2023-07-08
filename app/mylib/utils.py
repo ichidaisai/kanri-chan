@@ -30,3 +30,6 @@ async def get_message_from_url(url, guild):
 
 def sort_dests_for_limit(dests):
     return sorted(dests, key=attrgetter("limit", "id"))
+
+def sort_documents_for_id(documents):
+    return sorted(documents, key=attrgetter("id"), reverse=True)
