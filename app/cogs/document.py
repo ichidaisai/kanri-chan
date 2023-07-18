@@ -36,8 +36,6 @@ class Document(commands.Cog):
             if now >= limit_dt:
                 continue
             role = self.bot.guild.get_role(dest.role_id)
-            if role not in interaction.user.roles:
-                continue
             handler_role = self.bot.guild.get_role(dest.handler_id)
             embed = discord.Embed(
                 description=f"id: {dest.id}\n"
@@ -132,7 +130,7 @@ class Document(commands.Cog):
             name=union.type,
         )
         embed = discord.Embed(
-            description=f"id: {document.id}\n"
+            description=f"提出物id: {document.id}\n"
             f"提出先: {dest.name}(id={dest.id})\n"
             f"団体名: {union.name}\n"
             f"提出物: [jump]({document.msg_url})",
@@ -190,7 +188,7 @@ class Document(commands.Cog):
                     dest = None
                 role = self.bot.guild.get_role(union.role_id)
                 embed = discord.Embed(
-                    description=f"id: {document.id}\n"
+                    description=f"提出先id: {dest.id if dest is not None else -1}\n"
                     f"提出先: {dest.name if dest is not None else 'Unknown'}\n"
                     f"団体名: {role.mention}\n"
                     f"提出物: [jump]({document.msg_url})",
@@ -331,7 +329,7 @@ class DocumentManager(commands.Cog):
                 return await interaction.response.send_message("この団体に指示されている提出先はありません。")
             table = f"union_name: {union.name}\nunion_type: {union.type}\n\n"
             for dest in dests:
-                if database.is_document_exist(dest_id=dest_id, union_id=union.id):
+                if database.is_document_exist(dest_id=dest.id, union_id=union.id):
                     table += f"{dest.name}:  ✅\n"
                 else:
                     table += f"{dest.name}:  ❌\n"
