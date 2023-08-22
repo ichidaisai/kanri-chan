@@ -20,76 +20,70 @@ class Reminder(commands.Cog):
             datetime.timedelta(hours=1),
         ]
         self.reminder.start()
+        self.weekly_reminder.start()
+
 
     times = []
     for hour in range(24):
         for minute in range(60):
-            times.append(datetime.time(hour=hour, minute=minute))
-
-    async def send_reminder(self, dest, channel, now):
-        try:
-            union = database.Union(channel_id=channel.id)
-        except UnionNotExist:
-            return
-        if database.is_document_exist(dest_id=dest.id, union_id=union.id):
-            return
-        # 時間
-        limit_dt = datetime.datetime.fromtimestamp(dest.limit)
-        if not limit_dt - now in self.timedelta_list:
-            return
-        # 削除
-        async for message in channel.history(limit=None):
-            if (
-                dest.name in message.content
-                and discord.utils.format_dt(limit_dt, style="F") in message.content
-            ):
-                await message.delete()
-                break
-        # 送信
-        await channel.send(
-            f"🔔 **{dest.name}** の提出期限は {discord.utils.format_dt(limit_dt, style='F')}ですが、まだ提出されていないようです。\n"
-            "可能な限りの早めの提出をお願いします！"
-        )
+            times.append(datetime.time(hour=hour, minute=minute, tzinfo=datetime.timezone(datetime.timedelta(hours=9))))
 
     @tasks.loop(time=times)
     async def reminder(self):
         now = datetime.datetime.now()
         now = now.replace(minute=now.minute, second=0, microsecond=0)
-        all_dest = database.get_all_dest()
-        for dest in all_dest:
-            role = self.bot.guild.get_role(dest.role_id)
-            abstract_channel = discord.utils.get(
-                self.bot.guild.channels, name=role.name
-            )
-            if isinstance(abstract_channel, discord.CategoryChannel):
-                category = abstract_channel
-                for channel in category.text_channels:
-                    await self.send_reminder(dest, channel, now)
-            elif isinstance(abstract_channel, discord.TextChannel):
-                await self.send_reminder(dest, abstract_channel, now)
-
-        if now.weekday() == 0 and now.hour == 8 and now.minute == 0:  # 月曜日の午前7時0分
-            for union in database.get_all_union():
-                role = discord.utils.get(self.bot.guild.roles, name=union.type)
-                dests_for_type = database.get_dests(role_id=role.id)
-                dests_for_union = database.get_dests(role_id=union.role_id)
-                dests = set(dests_for_type + dests_for_union)
-                for dest in dests:
-                    if database.is_document_exist(dest_id=dest.id, union_id=union.id):
-                        continue
-                    limit_dt = datetime.datetime.fromtimestamp(dest.limit)
+        for union in database.get_all_union():
+            channel = self.bot.guild.get_channel(union.channel_id)
+            type_role = discord.utils.get(self.bot.guild.roles, name=union.type)
+            dests = database.get_dests(type_role.id) + database.get_dests(union.role_id)
+            for dest in dests:
+                if database.is_document_exist(dest_id=dest.id, union_id=union.id):
+                    continue
+                limit_dt = datetime.datetime.fromtimestamp(dest.limit)
+                if not (limit_dt - now) in self.timedelta_list:
+                    continue
+                async for message in channel.history(limit=None):
                     if (
-                        datetime.timedelta(days=0)
-                        < (limit_dt - now)
-                        <= datetime.timedelta(days=7)
+                        dest.name in message.content
+                        and discord.utils.format_dt(limit_dt, style="F") in message.content
                     ):
+                        await message.delete()
                         break
-                else:
-                    channel = self.bot.guild.get_channel(union.channel_id)
-                    # await channel.send("✅ 今週が締切の提出物はありません")
+                await channel.send(
+                    f"{self.bot.guild.get_role(union.role_id).mention} 🔔 **{dest.name}** の提出期限は {discord.utils.format_dt(limit_dt, style='F')}ですが、まだ提出されていないようです。\n"
+                    "可能な限りの早めの提出をお願いします！"
+                )
+    @tasks.loop(time=datetime.time(hour=7, minute=0, tzinfo=datetime.timezone(datetime.timedelta(hours=9))))
+    async def weekly_reminder(self):
+        now = datetime.datetime.now()
+        now = now.replace(minute=now.minute, second=0, microsecond=0)
+        if now.weekday() != 0:
+            return
+        for union in database.get_all_union():
+            role = discord.utils.get(self.bot.guild.roles, name=union.type)
+            dests_for_type = database.get_dests(role_id=role.id)
+            dests_for_union = database.get_dests(role_id=union.role_id)
+            dests = set(dests_for_type + dests_for_union)
+            for dest in dests:
+                if database.is_document_exist(dest_id=dest.id, union_id=union.id):
+                    continue
+                limit_dt = datetime.datetime.fromtimestamp(dest.limit)
+                if (
+                    datetime.timedelta(days=0)
+                    < (limit_dt - now)
+                    <= datetime.timedelta(days=7)
+                ):
+                    break
+            else:
+                channel = self.bot.guild.get_channel(union.channel_id)
+                # await channel.send("✅ 今週が締切の提出物はありません")
 
     @reminder.before_loop
     async def before_reminder(self):
+        await self.bot.wait_until_ready()
+
+    @weekly_reminder.before_loop
+    async def before_weekly_reminder(self):
         await self.bot.wait_until_ready()
 
 
