@@ -471,7 +471,6 @@ class DocumentManager(commands.Cog):
                     zip_f.write(
                         folder_path
                         + f"/{union.name}.{attachment.filename.split('.')[-1]}",
-                        compress_type=zipfile.ZIP_LZMA,
                     )
             zip_f.close()
             try:
