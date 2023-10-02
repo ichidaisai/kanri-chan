@@ -25,7 +25,7 @@ class MessageNotification(commands.Cog):
             MOGI_CONTACT_CATEGORY_ID,
         ):
             return
-        async for msg in channel.history(limit=None):
+        async for msg in message.channel.history(limit=None):
             if msg.content == "@everyone":
                 await msg.delete()
                 break
