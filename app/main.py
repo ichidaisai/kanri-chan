@@ -1,11 +1,14 @@
 # 外部モジュール
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import logging
 import os
 
 # 内部モジュール
 from constant import TOKEN, SERVER_ID, RELAYING_CATEGORY_ID
+
+
+_log = logging.getLogger(__name__)
 
 
 class KanriChan(commands.Bot):
@@ -37,12 +40,12 @@ class KanriChan(commands.Bot):
         self.guild = self.get_guild(SERVER_ID)
         if self.guild is None:
             raise Exception("guildが正しく指定されていません。")
-        self.category_channel = self.guild.get_channel(RELAYING_CATEGORY_ID)
-        if not isinstance(self.category_channel, discord.CategoryChannel):
-            raise Exception("category_channelが正しく指定されていません。")
-        message_relay = self.get_cog("MessageRelay")
-        for channel in self.category_channel.text_channels:
-            await message_relay.setup_select(channel)
+        # self.category_channel = self.guild.get_channel(RELAYING_CATEGORY_ID)
+        # if not isinstance(self.category_channel, discord.CategoryChannel):
+        #     raise Exception("category_channelが正しく指定されていません。")
+        # message_relay = self.get_cog("MessageRelay")
+        # for channel in self.category_channel.text_channels:
+        #     await message_relay.setup_select(channel)
         discord.utils.setup_logging(level=logging.ERROR, root=False)
 
 

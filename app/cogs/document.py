@@ -7,13 +7,11 @@ from discord.ext import commands
 import io
 import os
 import pandas as pd
-from pydrive2.auth import GoogleAuth
-from pydrive2.drive import GoogleDrive
 import shutil
 import zipfile
 
 # 内部モジュール
-from constant import SERVER_ID, GOOGLE_DRIVE_FOLDER_ID, NOTICE_CATEGORY_ID
+from constant import SERVER_ID,  NOTICE_CATEGORY_ID
 from mylib import database, utils
 
 
@@ -172,9 +170,6 @@ class DocumentCommandGroup(app_commands.Group):
 class DocumentManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        gauth = GoogleAuth()
-        gauth.LocalWebserverAuth()
-        self.drive = GoogleDrive(gauth)
 
     document_group = DocumentCommandGroup(name="提出物", description="提出物を操作します。")
 
@@ -439,20 +434,7 @@ class DocumentManager(commands.Cog):
                         compress_type=zipfile.ZIP_LZMA,
                     )
             zip_f.close()
-            try:
-                await interaction.followup.send(file=discord.File(zip_path))
-            except Exception:
-                try:
-                    drive_file = self.drive.CreateFile(
-                        {"parents": [{"id": GOOGLE_DRIVE_FOLDER_ID}]}
-                    )
-                    drive_file.SetContentFile(zip_path)
-                    drive_file.Upload()
-                    await interaction.followup.send(
-                        f"ファイルが大きすぎたため、Google Driveにアップロードしました。\nhttps://drive.google.com/uc?export=download&id={drive_file['id']}"
-                    )
-                except Exception:
-                    await interaction.followup.send("エラーが発生しました。管理者まで連絡してください。")
+            await interaction.followup.send(file=discord.File(zip_path))
             shutil.rmtree(folder_path)
 
 
