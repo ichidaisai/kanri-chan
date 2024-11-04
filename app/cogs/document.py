@@ -11,14 +11,9 @@ import shutil
 import zipfile
 
 # 内部モジュール
-<<<<<<< Updated upstream
-from constant import SERVER_ID, GOOGLE_DRIVE_FOLDER_ID, NOTICE_CATEGORY_ID
+from constant import SERVER_ID, NOTICE_CATEGORY_ID
 import mylib
 from mylib import database, utils, Pagenator
-=======
-from constant import SERVER_ID,  NOTICE_CATEGORY_ID
-from mylib import database, utils
->>>>>>> Stashed changes
 
 
 class Document(commands.Cog):
@@ -84,10 +79,14 @@ class Document(commands.Cog):
         now = now.replace(minute=now.minute, second=0, microsecond=0)
         limit_dt = datetime.datetime.fromtimestamp(dest.limit)
         if now >= limit_dt:
-            return await interaction.channel.send(content="提出期限を過ぎたので、提出できません。")
+            return await interaction.channel.send(
+                content="提出期限を過ぎたので、提出できません。"
+            )
         role = self.bot.guild.get_role(dest.role_id)
         if role not in interaction.user.roles:
-            return await interaction.channel.send(content="あなたはこの提出先の対象ではありません。")
+            return await interaction.channel.send(
+                content="あなたはこの提出先の対象ではありません。"
+            )
         if database.is_document_exist(dest_id=dest_id, union_id=union.id):
             await interaction.channel.send(
                 "既に提出済みです。上書きしますか？`はい`と送信してください。しない場合は`はい`以外を送信して下さい。"
@@ -128,6 +127,7 @@ class Document(commands.Cog):
         await interaction.channel.send("提出を受け付けました。")
         # 提出通知
         document = database.Document(dest_id=dest_id, union_id=union.id)
+        print(NOTICE_CATEGORY_ID)
         notice_channel = discord.utils.get(
             (self.bot.guild.get_channel(NOTICE_CATEGORY_ID)).text_channels,
             name=union.type,
@@ -211,14 +211,19 @@ class DocumentManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    document_group = DocumentCommandGroup(name="提出物", description="提出物を操作します。")
+    document_group = DocumentCommandGroup(
+        name="提出物", description="提出物を操作します。"
+    )
 
     @app_commands.describe(
         union_role="作成する団体をロールで指定",
         dest_id="提出する提出先をIDで指定",
     )
     @app_commands.rename(
-        union_role="団体", dest_id="提出先", content="プレーンテキスト", attachment="ファイル"
+        union_role="団体",
+        dest_id="提出先",
+        content="プレーンテキスト",
+        attachment="ファイル",
     )
     @document_group.command(name="作成", description="提出物作成")
     async def make_document(
@@ -236,9 +241,13 @@ class DocumentManager(commands.Cog):
         union = database.Union(role_id=union_role.id)
         dest = database.Dest(id=dest_id)
         if dest.format == "プレーンテキスト" and content is None:
-            return await interaction.response.send_message("プレーンテキストで提出してください。")
+            return await interaction.response.send_message(
+                "プレーンテキストで提出してください。"
+            )
         elif dest.format == "ファイル" and attachment is None:
-            return await interaction.response.send_message("ファイルで提出してください。")
+            return await interaction.response.send_message(
+                "ファイルで提出してください。"
+            )
         if attachment:
             file_io = io.BytesIO()
             await attachment.save(file_io)
@@ -316,7 +325,9 @@ class DocumentManager(commands.Cog):
                 f"提出物: [jump]({document.msg_url})",
                 color=discord.Color.green(),
             )
-            return await interaction.response.send_message("提出済みです。", embed=embed)
+            return await interaction.response.send_message(
+                "提出済みです。", embed=embed
+            )
         elif union_role:
             if not database.is_union_exist(union_role_id=union_role.id):
                 return await interaction.response.send_message("存在しない団体です。")
@@ -326,7 +337,9 @@ class DocumentManager(commands.Cog):
             dests_for_union = database.get_dests(role_id=union.role_id)
             dests = list(set(dests_for_type + dests_for_union))
             if len(dests) == 0:
-                return await interaction.response.send_message("この団体に指示されている提出先はありません。")
+                return await interaction.response.send_message(
+                    "この団体に指示されている提出先はありません。"
+                )
             table = f"union_name: {union.name}\nunion_type: {union.type}\n\n"
             for dest in dests:
                 if database.is_document_exist(dest_id=dest.id, union_id=union.id):
@@ -356,7 +369,9 @@ class DocumentManager(commands.Cog):
                     f"提出物: [jump]({document.msg_url})",
                     color=discord.Color.green(),
                 )
-                return await interaction.response.send_message("提出済みです。", embed=embed)
+                return await interaction.response.send_message(
+                    "提出済みです。", embed=embed
+                )
             union_list = [
                 union for union in database.get_all_union() if union.type == role.name
             ]
@@ -373,7 +388,9 @@ class DocumentManager(commands.Cog):
             )
             await interaction.response.send_message(embed=embed)
         else:
-            return await interaction.response.send_message("団体もしくは提出先を指定してください。")
+            return await interaction.response.send_message(
+                "団体もしくは提出先を指定してください。"
+            )
 
     @app_commands.describe(
         dest_id="リストを出力する提出先をIDで指定",
@@ -436,7 +453,9 @@ class DocumentManager(commands.Cog):
                     )
             df = pd.DataFrame(export_list)
             df.set_axis(
-                ["提出 ID", "提出日時", "提出者", "提出元ロール", "提出内容"], axis="columns", copy=False
+                ["提出 ID", "提出日時", "提出者", "提出元ロール", "提出内容"],
+                axis="columns",
+                copy=False,
             )
             df.to_excel(file_name, sheet_name="結果", index=False)
             await interaction.followup.send(file=discord.File(file_name))

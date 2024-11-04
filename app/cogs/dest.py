@@ -44,10 +44,13 @@ class DestManager(commands.Cog):
         target_role: discord.Role,
         document_format: Literal["プレーンテキスト", "ファイル"],
         handler_role: discord.Role,
-        date: str,
+        year: str = "2024",
+        date: str = "12/31",
         time: str = "23:59",
     ):
-        dest_limit = datetime.datetime.strptime(f"2023/{date} {time}", "%Y/%m/%d %H:%M")
+        dest_limit = datetime.datetime.strptime(
+            f"{year}/{date} {time}", "%Y/%m/%d %H:%M"
+        )
         if dest_limit < datetime.datetime.now():
             return await interaction.response.send_message(
                 content="⚠ 提出期限が過去に設定されています。\nもう一度、最初からやり直してください。",

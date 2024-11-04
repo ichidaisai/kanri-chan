@@ -29,4 +29,4 @@ COPY settings.yaml .
 COPY client_secrets.json .
 COPY credentials.json .
 
-CMD ["python", "main.py"]
+CMD ["python", "-u", "main.py"]
