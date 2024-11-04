@@ -25,8 +25,8 @@ RUN pip install -r requirements.txt
 
 COPY app/. .
 COPY .env .
-COPY settings.yaml .
-COPY client_secrets.json .
-COPY credentials.json .
+# COPY settings.yaml .
+# COPY client_secrets.json .
+# COPY credentials.json .
 
 CMD ["python", "-u", "main.py"]
